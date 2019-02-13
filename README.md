@@ -1,3 +1,1 @@
-# g69
-# Läs detta
-hej
+# Grupp 69 är den bästa gruppen
