@@ -1,4 +1,5 @@
 
+
 module Main(main) where
 import Debug.Trace
 import Graphics.Gloss
@@ -12,19 +13,28 @@ import Data.Array
 
 import Graphics.Gloss.Data.Picture
 
-
-
-
+-- Saved values --
 width, height, offset :: Int
 width = 500
 height = 500
 offset = 100
 
+
+
 window :: Display
 window = InWindow "Pong" (width, height) (offset, offset)
 
+
+
 background :: Color
-background = black
+background = white
+
+
+
+fps :: Int
+fps = 60
+
+
 
 {-
 -- Run a finite-time-step simulation in a window.
@@ -36,17 +46,15 @@ simulate :: Display -- ^ How to display the game.
          -> (ViewPort -> Float -> CandyGame -> CandyGame) -- ^ A function to step the game once. 
         -> IO ()
 -}
-fps :: Int
-fps = 60
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
 
+
+
 moveSquareX :: Float
-           -> CandyGame -- The initial game state
-           -> CandyGame -- A new game state with an updated ball position
-
-
+            -> CandyGame -- The initial game state
+            -> CandyGame -- A new game state with an updated square position
 moveSquareX move game = game { squareLoc = (x', y') }
   where
     -- Old locations and velocities.
@@ -116,7 +124,8 @@ data CandyGame = Game
 
 --  Draw a pong game state (convert it to a picture).
 render :: CandyGame ->  Picture
-render game = pictures [mkPaddle rose $ squareLoc game]
+render game = pictures ((paintRectangles (squareLocations 5 (-200,200))) ++ [mkPaddle rose $ squareLoc game]) -- Konkatinerade rutnätet med Eriks ruta
+
   
 mkPaddle :: Color -> (Float, Float) -> Picture
 mkPaddle col (x,y) = pictures
@@ -128,7 +137,7 @@ paddleColor = light (light blue)
 --  Initialize the game with this game state.
 initialState :: CandyGame
 initialState = Game { --playerLoc = ((-200),200)
-                      squareLoc = ((-100),200)
+                      squareLoc = ((-200),200)
                     , playerMove  = 0
                     , player1 = 40
                     , player2 = -80}

@@ -1,4 +1,4 @@
-# Revision history for Gloss
+# Revision history for SpelPrototyp
 
 ## 0.1.0.0  -- YYYY-mm-dd
 
