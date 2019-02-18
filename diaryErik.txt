@@ -1,1 +1,10 @@
 Fixade git. -1h --13/02
+
+Undersökte hur man skapar en GameLoop i haskell och implementerade en i projektprototypen.
+-5h --18/02
+
+Skapade en markör som går att flytta för att välja godis att flytta på.
+-2h --18/02
+
+Städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet.
+-2h --18/02
