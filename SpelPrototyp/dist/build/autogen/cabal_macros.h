@@ -28,6 +28,13 @@
   (major1) == 1 && (major2) <  13 || \
   (major1) == 1 && (major2) == 13 && (minor) <= 0)
 
+/* package random-1.1 */
+#define VERSION_random "1.1"
+#define MIN_VERSION_random(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  1 || \
+  (major1) == 1 && (major2) == 1 && (minor) <= 0)
+
 /* tool alex-3.2.3 */
 #define TOOL_VERSION_alex "3.2.3"
 #define MIN_TOOL_VERSION_alex(major1,major2,minor) (\
