@@ -1,1 +1,15 @@
 Fixade git. -1h --13/02
+
+Undersökte hur man skapar en GameLoop i Haskell genom att följa olika guider online.
+Valde att studera en gameLoop till ett pong spel och implementera de delar som passade vårt spel.
+-5h --18/02
+
+Skapade en markör som går att flytta för att välja godis att flytta på.
+-2h --18/02
+
+Städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet.
+-2h --18/02
+
+Ritade första godisarna i paint.
+-15Min --20/02
+ 
