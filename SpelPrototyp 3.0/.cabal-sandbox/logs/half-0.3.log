@@ -1,0 +1,112 @@
+cabal: Entering directory '/var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/cabal-tmp-17265/half-0.3'
+Configuring half-0.3...
+Building half-0.3...
+Preprocessing library half-0.3...
+[1 of 1] Compiling Numeric.Half     ( src/Numeric/Half.hs, dist/dist-sandbox-4c142bec/build/Numeric/Half.o )
+[1 of 1] Compiling Numeric.Half     ( src/Numeric/Half.hs, dist/dist-sandbox-4c142bec/build/Numeric/Half.p_o )
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc17494_0/ghc_5.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+Running Haddock for half-0.3...
+Preprocessing library half-0.3...
+Haddock coverage:
+  81% ( 13 / 16) in 'Numeric.Half'
+  Missing documentation for:
+    Half (src/Numeric/Half.hs:71)
+    HALF_MIN_10_EXP (src/Numeric/Half.hs:196)
+    HALF_MAX_10_EXP (src/Numeric/Half.hs:199)
+Documentation created: dist/dist-sandbox-4c142bec/doc/html/half/index.html
+Creating package registration file:
+/var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/pkgConf-half-012648177091998097157.3
+Installing library in
+/Users/Erik/Desktop/gloss/.cabal-sandbox/lib/x86_64-osx-ghc-8.0.2/half-0.3-EmW9ReJcWGNGvozBAIWFDz
+Registering half-0.3...
+cabal: Leaving directory '/var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/cabal-tmp-17265/half-0.3'
