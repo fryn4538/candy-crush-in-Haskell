@@ -1,4 +1,5 @@
 module Main(main) where
+import System.IO.Unsafe  -- be careful! 
 import Debug.Trace
 import Graphics.Gloss
 import Graphics.Gloss.Data.Color (makeColor, red)
@@ -12,20 +13,24 @@ import System.Random
 
 
 
+
+
 data CandyGame = Game
   { --playerLoc :: (Float, Float)
     squareLoc :: (Float, Float) 
   } deriving Show
 
-
+-- In order to get random candies we chose a random element from a list.
 -- Saved values --
 width, height, offset :: Int
 width = 501 -- Ändrade till 501 eftersom ramen runt är 1 px bred
 height = 501
 offset = 100
 
+--PRE: boxes >= 5 or the game will crash
+
 boxes :: Float
-boxes = 5
+boxes = 7
 
 ---------------------------- Mainfunktionen ----------------------------------------------------
 {-- | Play a game in a window.
@@ -55,12 +60,12 @@ fps = 60
 --  Initialize the game with this game state.
 initialState :: CandyGame
 initialState = Game { --playerLoc = ((-200),200)
-                      squareLoc = ((-200),200)
+                      squareLoc = ((-((boxes*50)-50)),((boxes*50)-50))
                     }
 
 --  Draw a candy game state (convert it to a picture).
 render :: CandyGame ->  Picture
-render game = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker rose $ squareLoc game] ++ (paintCandy (candyLocations boxes (-200,200)))) -- Konkatinerade rutnätet med Eriks ruta
+render game = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker rose $ squareLoc game] ++ (paintCandy (candyLocations boxes (-200,200)) (c 64))) -- Konkatinerade rutnätet med Eriks ruta
 
 --  Respond to key events.
 handleKeys :: Event -> CandyGame -> CandyGame
@@ -84,37 +89,32 @@ moveSquare moveX moveY game = game { squareLoc = (x', y') }
     (x, y) = squareLoc game
 
     -- New locations. -- Nu kan man inte gå ut ur fönstret.
-    x' | x >= (200) && moveX >= 0 = x
-       | x >= (200) && moveX < 0 = x + moveX
-       | x <= (-200) && moveX <= 0 = x
-       | x <= (-200) && moveX > 0 = x + moveX
+    x' | x >= ((boxes * 50)-50) && moveX >= 0 = x
+       | x >= ((boxes * 50)-50) && moveX < 0 = x + moveX
+       | x <= (-((boxes * 50)-50)) && moveX <= 0 = x
+       | x <= (-((boxes * 50)-50)) && moveX > 0 = x + moveX
        | otherwise = x + moveX
    -- x' = x - move
-    y' | y >= (200) && moveY >= 0 = y
-       | y >= (200) && moveY < 0 = y + moveY
-       | y <= (-200) && moveY <= 0 = y
-       | y <= (-200) && moveY > 0 = y + moveY
+    y' | y >= ((boxes * 50)-50) && moveY >= 0 = y
+       | y >= ((boxes * 50)-50) && moveY < 0 = y + moveY
+       | y <= (-((boxes * 50)-50)) && moveY <= 0 = y
+       | y <= (-((boxes * 50)-50)) && moveY > 0 = y + moveY
        | otherwise = y + moveY
 
 
 
-paintCandy :: [(Float,Float)] -> [Picture]
-paintCandy [] = []
-paintCandy ((a,b):xs) = [Color white $ translate a b $ rectangleSolid 50 50] ++ paintCandy xs
+paintCandy :: [(Float,Float)] -> [Color] -> [Picture]
+paintCandy [] col = []
+paintCandy ((a,b):xs) col = [Color (head col) $ translate a b $ rectangleSolid 50 50] ++ paintCandy  xs (tail col)
 
-{-
-PRE: Börjar på (-200,200)
--}
-  
-  
+
  
-  
 candyLocations :: Float -> (Float, Float)-> [(Float,Float)]
 candyLocations 0  (a,b)
-  | a > 200 && b < (-100) = []
+  | a > 200 && b < (-((boxes*100)-400)) = []
   | otherwise = candyLocations boxes ((-200), b-100)
  
-candyLocations int (a,b) = [(a,b)] ++ candyLocations (int-1) (a+100,b)
+candyLocations int (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ candyLocations (int-1) (a+100,b)
 
 
 -- Do nothing for all other events.  
@@ -124,8 +124,22 @@ mkMarker col (x,y) = pictures
 
 paddleColor = light (light blue)
 
+   {-                                     
+deep :: IO Int -> Color
+deep b = do
+  col <- (getColor `deepseq` (unsafePerformIO b))
+  return col
+-}
 
+-- a randomly chosen, program-scoped constant from the range [0 .. 9]            
+c :: Int -> [Color]
+c 0 = []
+c n = [getColor (unsafePerformIO (randomRIO (1,3)))] ++ c (n-1) 
 
+getColor :: Int -> Color
+getColor n | n == 1 = red
+           | n == 2 = white
+           | otherwise = green
 
 --main = (InWindow "Nice Window" (200, 200) (10, 10)) white (Circle 80)
 --rectangleWire :: Float -> Float -> Picture
@@ -143,10 +157,10 @@ PRE: Börjar på (-200,200)
 -}
 squareLocations :: Float -> (Float, Float)-> [(Float,Float)]
 squareLocations 0  (a,b)
-  | a > 200 && b < (-100) = []
+  | a > 200 && b < (-((boxes*100)-400)) = []
   | otherwise = squareLocations boxes ((-200), b-100)
  
-squareLocations int (a,b) = [(a,b)] ++ squareLocations (int-1) (a+100,b)
+squareLocations int (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ squareLocations (int-1) (a+100,b)
 
 
 
