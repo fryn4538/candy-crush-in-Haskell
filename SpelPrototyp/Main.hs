@@ -15,41 +15,68 @@ import Graphics.Gloss.Data.Picture
 
 -- Saved values --
 width, height, offset :: Int
+
+
 width = 500
 height = 500
 offset = 100
 
 
 
-window :: Display
-window = InWindow "Pong" (width, height) (offset, offset)
 
+---------------------------- Mainfunktionen ----------------------------------------------------
+{-- | Play a game in a window.
+play :: Display -- ^ Window to draw game in.
+     -> Color   -- ^ Background color.
+     -> Int     -- ^ Number of simulation steps per second of real time.
+     -> a       -- ^ The initial game state.
+     -> (a -> Picture)       -- ^ A function to render the world a picture.
+     -> (Event -> a -> a)    -- ^ A function to handle input events.
+     -> (Float -> a -> a)    -- ^ A function to step the world one iteration.
+     -> IO ()
 
-
-background :: Color
-background = white
-
-
-
-fps :: Int
-fps = 60
-
-
-
-{-
--- Run a finite-time-step simulation in a window.
-simulate :: Display -- ^ How to display the game.
-         -> Color   -- ^ Background color.
-         -> Int     -- ^ Number of simulation steps to take per second of real time.
-         -> CandyGame       -- ^ The initial game state. 
-         -> (CandyGame -> Picture) -- ^ A function to render the game state to a picture. 
-         -> (ViewPort -> Float -> CandyGame -> CandyGame) -- ^ A function to step the game once. 
-        -> IO ()
 -}
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
 
+------------------------ Playfunktionens argument ----------------------------------------------
+window :: Display
+window = InWindow "CrushTheCandy" (width, height) (offset, offset)
+
+background :: Color
+background = white
+
+fps :: Int
+fps = 60
+
+--  Initialize the game with this game state.
+initialState :: CandyGame
+initialState = Game { --playerLoc = ((-200),200)
+                      squareLoc = ((-200),200)
+                    , playerMove  = 0
+                    , player1 = 40
+                    , player2 = -80}
+
+--  Draw a candy game state (convert it to a picture).
+render :: CandyGame ->  Picture
+render game = pictures ((paintRectangles (squareLocations 5 (-200,200))) ++ [mkPaddle rose $ squareLoc game]) -- Konkatinerade rutnätet med Eriks ruta
+
+--  Respond to key events.
+handleKeys :: Event -> CandyGame -> CandyGame
+
+-- For an 's' keypress, reset the ball to the center.
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) game = moveSquareY (-100) game
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) game = moveSquareY 100 game
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) game = moveSquareX 100 game
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) game = moveSquareX (-100) game
+  -- game { playerMove = 1 }
+handleKeys _ game = game
+
+update :: Float -> CandyGame -> CandyGame 
+update = moveSquareX
+
+-------------------------------------------------------------------------------------------------
 
 
 moveSquareX :: Float
@@ -76,32 +103,9 @@ moveSquareY move game = game { squareLoc = (x', y') }
     x' = x
     y' = (y+ 1.6666668e-2) - move
 
-update :: Float -> CandyGame -> CandyGame 
-update = moveSquareX
 
-{-
--- | Play a game in a window.
-play :: Display -- ^ Window to draw game in.
-     -> Color   -- ^ Background color.
-     -> Int     -- ^ Number of simulation steps per second of real time.
-     -> a       -- ^ The initial game state.
-     -> (a -> Picture)       -- ^ A function to render the world a picture.
-     -> (Event -> a -> a)    -- ^ A function to handle input events.
-     -> (Float -> a -> a)    -- ^ A function to step the world one iteration.
-     -> IO ()
 
--}
--- | Respond to key events.
-handleKeys :: Event -> CandyGame -> CandyGame
 
--- For an 's' keypress, reset the ball to the center.
-handleKeys (EventKey (SpecialKey KeyUp) Down _ _) game = moveSquareY (-100) game
-handleKeys (EventKey (SpecialKey KeyDown) Down _ _) game = moveSquareY 100 game
-handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) game = moveSquareX 100 game
-handleKeys (EventKey (SpecialKey KeyRight) Down _ _) game = moveSquareX (-100) game
-  -- game { playerMove = 1 }
-
-handleKeys _ game = game
 
 
 -- Do nothing for all other events.
@@ -122,9 +126,7 @@ data CandyGame = Game
   , playerMove :: Float
   , player2 :: Float} deriving Show
 
---  Draw a pong game state (convert it to a picture).
-render :: CandyGame ->  Picture
-render game = pictures ((paintRectangles (squareLocations 5 (-200,200))) ++ [mkPaddle rose $ squareLoc game]) -- Konkatinerade rutnätet med Eriks ruta
+
 
   
 mkPaddle :: Color -> (Float, Float) -> Picture
@@ -134,13 +136,6 @@ mkPaddle col (x,y) = pictures
 
 paddleColor = light (light blue)
 
---  Initialize the game with this game state.
-initialState :: CandyGame
-initialState = Game { --playerLoc = ((-200),200)
-                      squareLoc = ((-200),200)
-                    , playerMove  = 0
-                    , player1 = 40
-                    , player2 = -80}
 
 
 
