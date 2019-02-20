@@ -12,6 +12,15 @@ import Control.Exception
 import Data.Array
 
 import Graphics.Gloss.Data.Picture
+import System.Random
+
+--  A data structure to hold the state of the Pong game.
+data CandyGame = Game
+  { --playerLoc :: (Float, Float)
+    squareLoc :: (Float, Float) 
+  , player1 :: Float
+  , playerMove :: Float
+  , player2 :: Float} deriving Show
 
 -- Saved values --
 width, height, offset :: Int
@@ -38,14 +47,14 @@ play :: Display -- ^ Window to draw game in.
 -}
 
 main :: IO ()
-main = play window background fps initialState render handleKeys update
+main = play window background fps initialState render handleKeys (const id) -- Löst så att rutan inte flyttas med (const id)
 
 ------------------------ Playfunktionens argument ----------------------------------------------
 window :: Display
 window = InWindow "CrushTheCandy" (width, height) (offset, offset)
 
 background :: Color
-background = white
+background = black
 
 fps :: Int
 fps = 60
@@ -60,48 +69,42 @@ initialState = Game { --playerLoc = ((-200),200)
 
 --  Draw a candy game state (convert it to a picture).
 render :: CandyGame ->  Picture
-render game = pictures ((paintRectangles (squareLocations 5 (-200,200))) ++ [mkPaddle rose $ squareLoc game]) -- Konkatinerade rutnätet med Eriks ruta
+render game = pictures ((paintRectangles (squareLocations 5 (-200,200))) ++ [mkMarker rose $ squareLoc game]) -- Konkatinerade rutnätet med Eriks ruta
 
 --  Respond to key events.
 handleKeys :: Event -> CandyGame -> CandyGame
 
 -- For an 's' keypress, reset the ball to the center.
-handleKeys (EventKey (SpecialKey KeyUp) Down _ _) game = moveSquareY (-100) game
-handleKeys (EventKey (SpecialKey KeyDown) Down _ _) game = moveSquareY 100 game
-handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) game = moveSquareX 100 game
-handleKeys (EventKey (SpecialKey KeyRight) Down _ _) game = moveSquareX (-100) game
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) game = moveSquare 0 100 game
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) game = moveSquare 0 (-100) game
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) game = moveSquare (-100) 0 game
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) game = moveSquare 100 0 game
   -- game { playerMove = 1 }
 handleKeys _ game = game
-
-update :: Float -> CandyGame -> CandyGame 
-update = moveSquareX
 
 -------------------------------------------------------------------------------------------------
 
 
-moveSquareX :: Float
+moveSquare :: Float -> Float
             -> CandyGame -- The initial game state
             -> CandyGame -- A new game state with an updated square position
-moveSquareX move game = game { squareLoc = (x', y') }
+moveSquare moveX moveY game = game { squareLoc = (x', y') }
   where
     -- Old locations and velocities.
     (x, y) = squareLoc game
 
-    -- New locations.
-    x' = (x+ 1.6666668e-2) - move
-    y' = y
-
-moveSquareY :: Float
-           -> CandyGame -- The initial game state
-           -> CandyGame -- A new game state with an updated ball position
-moveSquareY move game = game { squareLoc = (x', y') }
-  where
-    -- Old locations and velocities.
-    (x, y) = squareLoc game
-
-    -- New locations.
-    x' = x
-    y' = (y+ 1.6666668e-2) - move
+    -- New locations. -- Nu kan man inte gå ut ur fönstret.
+    x' | x >= (200) && moveX >= 0 = x
+       | x >= (200) && moveX < 0 = x + moveX
+       | x <= (-200) && moveX <= 0 = x
+       | x <= (-200) && moveX > 0 = x + moveX
+       | otherwise = x + moveX
+   -- x' = x - move
+    y' | y >= (200) && moveY >= 0 = y
+       | y >= (200) && moveY < 0 = y + moveY
+       | y <= (-200) && moveY <= 0 = y
+       | y <= (-200) && moveY > 0 = y + moveY
+       | otherwise = y + moveY
 
 
 
@@ -111,28 +114,12 @@ moveSquareY move game = game { squareLoc = (x', y') }
 -- Do nothing for all other events.
 
 
-drawing :: Picture
-drawing = pictures
-  [translate 30 50 $ color paddleColor $ rectangleSolid 100 100]
-  where
-    squareColor = red
-
-
---  A data structure to hold the state of the Pong game.
-data CandyGame = Game
-  { --playerLoc :: (Float, Float)
-    squareLoc :: (Float, Float) 
-  , player1 :: Float
-  , playerMove :: Float
-  , player2 :: Float} deriving Show
-
 
 
   
-mkPaddle :: Color -> (Float, Float) -> Picture
-mkPaddle col (x,y) = pictures
-  [ translate x y $ color paddleColor $ rectangleSolid 100 100
-  ]
+mkMarker :: Color -> (Float, Float) -> Picture
+mkMarker col (x,y) = pictures
+  [ translate x y $ color white $ lineLoop $ rectanglePath 100 100]
 
 paddleColor = light (light blue)
 
@@ -143,7 +130,7 @@ paddleColor = light (light blue)
 --rectangleWire :: Float -> Float -> Picture
 --rectangleWire sizeX sizeY = lineLoop $ rectanglePath 100 100
 rectangleWire1 =  translate (-200) 200 $ lineLoop $ rectanglePath 100 100
-rectangleWire2 =   rectangleWire 200 100
+rectangleWire2 =  rectangleWire 200 100
 
 
 paintRectangles :: [(Float,Float)] -> [Picture]
