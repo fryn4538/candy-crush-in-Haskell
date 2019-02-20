@@ -1,5 +1,3 @@
-
-
 module Main(main) where
 import Debug.Trace
 import Graphics.Gloss
@@ -7,31 +5,27 @@ import Graphics.Gloss.Data.Color (makeColor, red)
 import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Data.ViewPort
---import Graphics.UI.GLUT
 import Control.Exception
 import Data.Array
-
 import Graphics.Gloss.Data.Picture
 import System.Random
 
---  A data structure to hold the state of the Pong game.
+
+
 data CandyGame = Game
   { --playerLoc :: (Float, Float)
     squareLoc :: (Float, Float) 
-  , player1 :: Float
-  , playerMove :: Float
-  , player2 :: Float} deriving Show
+  } deriving Show
+
 
 -- Saved values --
 width, height, offset :: Int
-
-
-width = 500
-height = 500
+width = 501 -- Ändrade till 501 eftersom ramen runt är 1 px bred
+height = 501
 offset = 100
 
-
-
+boxes :: Float
+boxes = 5
 
 ---------------------------- Mainfunktionen ----------------------------------------------------
 {-- | Play a game in a window.
@@ -43,7 +37,6 @@ play :: Display -- ^ Window to draw game in.
      -> (Event -> a -> a)    -- ^ A function to handle input events.
      -> (Float -> a -> a)    -- ^ A function to step the world one iteration.
      -> IO ()
-
 -}
 
 main :: IO ()
@@ -51,7 +44,7 @@ main = play window background fps initialState render handleKeys (const id) -- L
 
 ------------------------ Playfunktionens argument ----------------------------------------------
 window :: Display
-window = InWindow "CrushTheCandy" (width, height) (offset, offset)
+window =  FullScreen--InWindow "CrushTheCandy" (width, height) (offset, offset)
 
 background :: Color
 background = black
@@ -63,23 +56,20 @@ fps = 60
 initialState :: CandyGame
 initialState = Game { --playerLoc = ((-200),200)
                       squareLoc = ((-200),200)
-                    , playerMove  = 0
-                    , player1 = 40
-                    , player2 = -80}
+                    }
 
 --  Draw a candy game state (convert it to a picture).
 render :: CandyGame ->  Picture
-render game = pictures ((paintRectangles (squareLocations 5 (-200,200))) ++ [mkMarker rose $ squareLoc game]) -- Konkatinerade rutnätet med Eriks ruta
+render game = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker rose $ squareLoc game] ++ (paintCandy (candyLocations boxes (-200,200)))) -- Konkatinerade rutnätet med Eriks ruta
 
 --  Respond to key events.
 handleKeys :: Event -> CandyGame -> CandyGame
 
--- For an 's' keypress, reset the ball to the center.
+-- For the different keypress.
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) game = moveSquare 0 100 game
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) game = moveSquare 0 (-100) game
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) game = moveSquare (-100) 0 game
 handleKeys (EventKey (SpecialKey KeyRight) Down _ _) game = moveSquare 100 0 game
-  -- game { playerMove = 1 }
 handleKeys _ game = game
 
 -------------------------------------------------------------------------------------------------
@@ -108,15 +98,26 @@ moveSquare moveX moveY game = game { squareLoc = (x', y') }
 
 
 
+paintCandy :: [(Float,Float)] -> [Picture]
+paintCandy [] = []
+paintCandy ((a,b):xs) = [Color white $ translate a b $ rectangleSolid 50 50] ++ paintCandy xs
 
-
-
--- Do nothing for all other events.
-
-
-
-
+{-
+PRE: Börjar på (-200,200)
+-}
   
+  
+ 
+  
+candyLocations :: Float -> (Float, Float)-> [(Float,Float)]
+candyLocations 0  (a,b)
+  | a > 200 && b < (-100) = []
+  | otherwise = candyLocations boxes ((-200), b-100)
+ 
+candyLocations int (a,b) = [(a,b)] ++ candyLocations (int-1) (a+100,b)
+
+
+-- Do nothing for all other events.  
 mkMarker :: Color -> (Float, Float) -> Picture
 mkMarker col (x,y) = pictures
   [ translate x y $ color white $ lineLoop $ rectanglePath 100 100]
@@ -142,8 +143,8 @@ PRE: Börjar på (-200,200)
 -}
 squareLocations :: Float -> (Float, Float)-> [(Float,Float)]
 squareLocations 0  (a,b)
-  | a > 200 && b < (-200) = []
-  | otherwise = squareLocations 5 ((-200), b-100)
+  | a > 200 && b < (-100) = []
+  | otherwise = squareLocations boxes ((-200), b-100)
  
 squareLocations int (a,b) = [(a,b)] ++ squareLocations (int-1) (a+100,b)
 
