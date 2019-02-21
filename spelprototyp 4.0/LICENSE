@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Copyright (c) 2019, August Bredberg
+=======
+Copyright (c) 2019, Fredrik Yngve
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
 
 All rights reserved.
 
@@ -13,7 +17,11 @@ modification, are permitted provided that the following conditions are met:
       disclaimer in the documentation and/or other materials provided
       with the distribution.
 
+<<<<<<< HEAD
     * Neither the name of August Bredberg nor the names of other
+=======
+    * Neither the name of Fredrik Yngve nor the names of other
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
       contributors may be used to endorse or promote products derived
       from this software without specific prior written permission.
 

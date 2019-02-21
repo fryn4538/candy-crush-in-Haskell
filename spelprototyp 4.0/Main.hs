@@ -15,13 +15,17 @@ import Control.Monad
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
 type Candy = (((Float,Float),Int),Color)
            -- (Float, Float) is the candy's coordinates
            -- Int is the 'spot' of the candy on the playing field
            -- Color is the candy's color
            
 
+<<<<<<< HEAD
 --data CandyBank = CandyBank 
 --  {  
 --    candyBank :: (((Float,Float),Int),Color)
@@ -32,6 +36,12 @@ data Player = Player
      playerColor :: Color,
      squareIndex :: Float,
      candyBank :: [Candy]
+=======
+
+data Player = Player
+  {  squareLoc :: (Float, Float)
+  , squareIndex :: Float
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
   } deriving Show
 
 -- In order to get random candies we chose a random element from a list.
@@ -62,6 +72,7 @@ play :: Display -- ^ Window to draw game in.
 -}
 
 main :: IO ()
+<<<<<<< HEAD
 main = play
        window
        background
@@ -72,6 +83,11 @@ main = play
        (const id) -- Löst så att rutan inte flyttas med (const id)
 
 ------------------------ Playfunktionens argument ------------------------------------
+=======
+main = play window background fps initialState render handleKeys (const id) -- Löst så att rutan inte flyttas med (const id)
+
+------------------------ Playfunktionens argument ----------------------------------------------
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
 window :: Display
 window =  FullScreen--InWindow "CrushTheCandy" (width, height) (offset, offset)
 
@@ -85,6 +101,7 @@ fps = 60
 initialState :: Player
 initialState = Player {
                       squareLoc = (((-((boxes*50)-50)),((boxes*50)-50)))
+<<<<<<< HEAD
                     ,squareIndex = 1,
                       playerColor = white,
                       candyBank = createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))
@@ -102,6 +119,16 @@ render player = pictures ((paintRectangles (squareLocations boxes (-200,200))) +
 
 
   --                        (paintCandy $ createCandy 0 (randColorGen (unsafePerformIO (--randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))))
+=======
+                    ,squareIndex = 0
+                     
+                    }
+
+
+--  Draw a candy game state (convert it to a picture).
+render :: Player ->  Picture
+render player = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker rose $  squareLoc player] ++ (paintCandy $ createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))))
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
 
 --  Respond to key events.
 handleKeys :: Event -> Player -> Player
@@ -111,6 +138,7 @@ handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player = moveSquare 0 100 play
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player = moveSquare 0 (-100) player
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player = moveSquare (-100) 0 player
 handleKeys (EventKey (SpecialKey KeyRight) Down _ _) player = moveSquare 100 0 player
+<<<<<<< HEAD
 handleKeys (EventKey (SpecialKey KeyEnter) Down _ _) player = handlePlayMove (squareIndex player) player
 handleKeys _ player = player
 
@@ -127,6 +155,10 @@ playAux ind ((((a,b),int),col):xs)
        | int == ind = [(((a,b),int),yellow)] ++ playAux ind xs
        | otherwise = [(((a,b),int),col)] ++ playAux ind xs
 
+=======
+handleKeys _ player = player
+
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
 -------------------------------------------------------------------------------------------------
 
 
@@ -137,6 +169,7 @@ moveSquare :: Float
 moveSquare moveX moveY player = trace ("z' = " ++ show z') $ player { squareLoc = (x', y'), squareIndex =  z'}
   where
     -- Old locations and velocities.
+<<<<<<< HEAD
 
 
     
@@ -178,6 +211,11 @@ updateLocationY bank z = snd(fst(fst( bank !! z)))
 
 --selectCandy :: 
 {-    
+=======
+    (x, y) = squareLoc player
+    z = squareIndex player
+    
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
     z' | y >= ((boxes * 50)-50) && moveY > 0 = z
        | y <= ((-(boxes * 50)+50)) && moveY < 0 = z
        | x >= ((boxes * 50)-50) && moveX > 0 = z
@@ -194,14 +232,22 @@ updateLocationY bank z = snd(fst(fst( bank !! z)))
        | x <= (-((boxes * 50)-50)) && moveX <= 0 = x
        | x <= (-((boxes * 50)-50)) && moveX > 0 = x + moveX
        | otherwise = x + moveX
+<<<<<<< HEAD
     -- x' = x - move
+=======
+   -- x' = x - move
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
     y' | y >= ((boxes * 50)-50) && moveY >= 0 = y
        | y >= ((boxes * 50)-50) && moveY < 0 = y + moveY
        | y <= (-((boxes * 50)-50)) && moveY <= 0 = y
        | y <= (-((boxes * 50)-50)) && moveY > 0 = y + moveY
        | otherwise = y + moveY
 
+<<<<<<< HEAD
    -}
+=======
+   
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
     
 
 --moveSquareAux :: Candy -> Player
@@ -246,9 +292,15 @@ candyLocations int (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2)
 
 
 -- Do nothing for all other events.  
+<<<<<<< HEAD
 mkMarker :: Player -> (Float, Float) -> Picture
 mkMarker player (x,y) = pictures
   [ translate x y $ color (playerColor player) $ lineLoop $ rectanglePath 100 100]
+=======
+mkMarker :: Color -> (Float, Float) -> Picture
+mkMarker col (x,y) = pictures
+  [ translate x y $ color white $ lineLoop $ rectanglePath 100 100]
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
 
 paddleColor = light (light blue)
 
@@ -278,7 +330,12 @@ rectangleWire2 =  rectangleWire 200 100
 
 paintRectangles :: [(Float,Float)] -> [Picture]
 paintRectangles [] = []
+<<<<<<< HEAD
 paintRectangles ((a,b):xs) = [Color red $ translate a b $ lineLoop $ rectanglePath 100 100] ++  paintRectangles xs
+=======
+paintRectangles ((a,b):xs) = [Color red $ translate a b $ lineLoop $ rectanglePath 100 100] ++
+                             paintRectangles xs
+>>>>>>> ed4fada19813aa4135a098a7e94d1e750c728a41
 {-
 PRE: Börjar på (-200,200)
 -}
