@@ -10,6 +10,7 @@ import Control.Exception
 import Data.Array
 import Graphics.Gloss.Data.Picture
 import System.Random
+import Control.Monad 
 
 
 
@@ -31,6 +32,9 @@ offset = 100
 
 boxes :: Float
 boxes = 7
+
+boxesInt :: Int
+boxesInt = 7
 
 ---------------------------- Mainfunktionen ----------------------------------------------------
 {-- | Play a game in a window.
@@ -65,7 +69,7 @@ initialState = Game { --playerLoc = ((-200),200)
 
 --  Draw a candy game state (convert it to a picture).
 render :: CandyGame ->  Picture
-render game = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker rose $ squareLoc game] ++ (paintCandy (candyLocations boxes (-200,200)) (c 64))) -- Konkatinerade rutnätet med Eriks ruta
+render game = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker rose $ squareLoc game] ++ (paintCandy (candyLocations boxes (-200,200)) (unsafePerformIO (c (boxesInt*boxesInt)) ))) -- Konkatinerade rutnätet med Eriks ruta
 
 --  Respond to key events.
 handleKeys :: Event -> CandyGame -> CandyGame
@@ -103,9 +107,9 @@ moveSquare moveX moveY game = game { squareLoc = (x', y') }
 
 
 
-paintCandy :: [(Float,Float)] -> [Color] -> [Picture]
+paintCandy :: [(Float,Float)] -> [Int] -> [Picture]
 paintCandy [] col = []
-paintCandy ((a,b):xs) col = [Color (head col) $ translate a b $ rectangleSolid 50 50] ++ paintCandy  xs (tail col)
+paintCandy ((a,b):xs) col = [Color (getColor(head(col))) $ translate a b $ rectangleSolid 50 50] ++ (paintCandy  xs (tail(col)))
 
 
  
@@ -130,16 +134,33 @@ deep b = do
   col <- (getColor `deepseq` (unsafePerformIO b))
   return col
 -}
-
+{-
 -- a randomly chosen, program-scoped constant from the range [0 .. 9]            
 c :: Int -> [Color]
 c 0 = []
-c n = [getColor (unsafePerformIO (randomRIO (1,3)))] ++ c (n-1) 
+c n = [getColor $ replicate n $ (unsafePerformIO $ randomRIO (1,3))] ++ c (n-1) 
+
+-}
+
+
+c :: Int -> IO([Int])
+c n = replicateM n $ randomRIO (1,4)
+
 
 getColor :: Int -> Color
 getColor n | n == 1 = red
            | n == 2 = white
-           | otherwise = green
+           | n == 3 = blue
+           | otherwise = dark green
+
+
+ranList :: StdGen -> Int -> [Int]
+ranList sg n = take n $ randomRs (1,3) sg
+
+bearable :: Int -> [Int]
+bearable n = unsafePerformIO $ do
+    sg <- getStdGen
+    return $ ranList sg n
 
 --main = (InWindow "Nice Window" (200, 200) (10, 10)) white (Circle 80)
 --rectangleWire :: Float -> Float -> Picture

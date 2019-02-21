@@ -12,4 +12,10 @@ Städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet.
 
 Ritade första godisarna i paint.
 -15Min --20/02
+
+Skapat en enklare kodstruktur där man kan ändra spelstorleken från 5x5 till 9x9 med en variabeländring
+1.5h --20/02
+
+Skapat ett system för slumpgenerering av godisfärger med hjälp av system.random. Detta är endast en form av placeholder för att förstå hur godisarna ritas ut.
+6h -- 20/02
  
