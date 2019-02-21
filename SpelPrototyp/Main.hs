@@ -27,6 +27,11 @@ offset = 100
 boxes :: Float
 boxes = 5
 
+-- bitmapOfBMP :: BMP -> Picture är det vi kommer behöva för att importera bild.
+-- Godisar
+gul :: BMP
+gul = 
+
 ---------------------------- Mainfunktionen ----------------------------------------------------
 {-- | Play a game in a window.
 play :: Display -- ^ Window to draw game in.
