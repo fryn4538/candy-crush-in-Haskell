@@ -19,3 +19,9 @@ Skapat en enklare kodstruktur där man kan ändra spelstorleken från 5x5 till 9
 Skapat ett system för slumpgenerering av godisfärger med hjälp av system.random. Detta är endast en form av placeholder för att förstå hur godisarna ritas ut.
 6h -- 20/02
  
+Vi har stött på ett problem där våra datatyper inte är optimala för att få koden att fungera och har arbetat mycket på att ordna detta. Vi har nu skapat en datatyp Candy som innehåller (((X-Kordinat, Y-Kordinat), Godisnummer), Färg)
+2h -- 21/02
+
+
+Vi bestämde att vi behöver en variabel Int för att hålla koll på vilken markör som godisen håller över så vi har skapat z som alltid håller koll på detta.
+2h -- 21/02
