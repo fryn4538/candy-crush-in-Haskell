@@ -15,6 +15,12 @@ import Control.Monad
 
 
 
+type Candy = (((Float,Float),Int),Color)
+           -- (Float, Float) is the candy's coordinates
+           -- Int is the 'spot' of the candy on the playing field
+           -- Color is the candy's color
+           
+
 
 data CandyGame = Game
   { --playerLoc :: (Float, Float)
@@ -69,6 +75,7 @@ initialState = Game { --playerLoc = ((-200),200)
                       listCoord = 0
                     }
 
+
 --  Draw a candy game state (convert it to a picture).
 render :: CandyGame ->  Picture
 render game = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker rose $ squareLoc game] ++ (paintCandy (candyLocations boxes (-200,200)) (unsafePerformIO (c (boxesInt*boxesInt)) ))) -- Konkatinerade rutnätet med Eriks ruta
@@ -113,7 +120,22 @@ moveSquare moveX moveY game = game { squareLoc = (x', y'), listCoord = z' }
        | y' > y = z + boxes
        | y' < y = z - boxes
        | otherwise  = z
-       
+
+-- tar 0, lista med colors, candyLocations (boxes (200,-200) [(((200,-200),0),white)]
+
+createCandy :: Int -> [Color] -> [(Float,Float)] -> [Candy]
+createCandy _ _ [] = []
+--createCandy _ _ _  = []
+createCandy int colors positions =
+           [(((head positions),(int+1)),(head colors))] ++ createCandy (int+1) (tail colors) (tail positions) 
+
+
+   --    | a > 200 && b < (-((boxes*100)-400)) = []
+   --    | otherwise = [(((a,-200),(acc+1)),] ++ createCandy....
+
+render' :: [Candy] -> Picture
+render' candies = undefined
+
 
 
 paintCandy :: [(Float,Float)] -> [Int] -> [Picture]
@@ -140,6 +162,10 @@ paddleColor = light (light blue)
 
 c :: Int -> IO([Int])
 c n = replicateM n $ randomRIO (1,4)
+
+recur :: [Int] -> [Color]
+recur [] = []
+recur list = [getColor (head list)] ++ recur (tail list)
 
 
 getColor :: Int -> Color
