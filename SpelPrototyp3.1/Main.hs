@@ -128,20 +128,6 @@ mkMarker col (x,y) = pictures
 
 paddleColor = light (light blue)
 
-   {-                                     
-deep :: IO Int -> Color
-deep b = do
-  col <- (getColor `deepseq` (unsafePerformIO b))
-  return col
--}
-{-
--- a randomly chosen, program-scoped constant from the range [0 .. 9]            
-c :: Int -> [Color]
-c 0 = []
-c n = [getColor $ replicate n $ (unsafePerformIO $ randomRIO (1,3))] ++ c (n-1) 
-
--}
-
 
 c :: Int -> IO([Int])
 c n = replicateM n $ randomRIO (1,4)
@@ -154,13 +140,6 @@ getColor n | n == 1 = red
            | otherwise = dark green
 
 
-ranList :: StdGen -> Int -> [Int]
-ranList sg n = take n $ randomRs (1,3) sg
-
-bearable :: Int -> [Int]
-bearable n = unsafePerformIO $ do
-    sg <- getStdGen
-    return $ ranList sg n
 
 --main = (InWindow "Nice Window" (200, 200) (10, 10)) white (Circle 80)
 --rectangleWire :: Float -> Float -> Picture
