@@ -21,7 +21,6 @@ type Candy = (((Float,Float),Int),Color)
            -- Color is the candy's color
            
 
-
 data CandyGame = Game
   { --playerLoc :: (Float, Float)
     squareLoc :: (Float, Float),
