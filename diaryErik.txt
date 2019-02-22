@@ -25,3 +25,11 @@ Vi har stött på ett problem där våra datatyper inte är optimala för att f�
 
 Vi bestämde att vi behöver en variabel Int för att hålla koll på vilken markör som godisen håller över så vi har skapat z som alltid håller koll på detta.
 2h -- 21/02
+
+
+Vi har skapat en funktion för att markera den godisen som ska flyttas på med en annan färgad rektangel. 
+30 min --21/02
+
+
+Jag har sett till att ifall man markerar en godis och klickar på piltangenterna för att byta plats på denna så får man en return True eller False ifall bytet är tillåtet. Alltså så länge det finns en godis bredvid att byta med och man inte försöker byta med en godis neråt när man är längst ner på spelplanen. Jag har även skapat en funktion för att byta plats på två godisar genom att markera dem med [Enter] och sedan trycka på piltangenterna.
+4h -- 22/02
