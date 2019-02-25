@@ -1,6 +1,6 @@
 Fixade git. -1h --13/02
 
-Undersökte hur man skapar en GameLoop i Haskell genom att följa olika guider online.
+Jag undersökte hur man skapar en GameLoop i Haskell genom att följa olika guider online.
 Valde att studera en gameLoop till ett pong spel och implementera de delar som passade vårt spel.
 -5h --18/02
 
@@ -10,10 +10,10 @@ Skapade en markör som går att flytta för att välja godis att flytta på.
 Städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet.
 -2h --18/02
 
-Ritade första godisarna i paint.
+Jag ritade första godisarna i paint.
 -15Min --20/02
 
-Skapat en enklare kodstruktur där man kan ändra spelstorleken från 5x5 till 9x9 med en variabeländring
+Jag har skapat en enklare kodstruktur där man kan ändra spelstorleken från 5x5 till 9x9 med en variabeländring
 1.5h --20/02
 
 Skapat ett system för slumpgenerering av godisfärger med hjälp av system.random. Detta är endast en form av placeholder för att förstå hur godisarna ritas ut.
@@ -23,11 +23,11 @@ Vi har stött på ett problem där våra datatyper inte är optimala för att f�
 2h -- 21/02
 
 
-Vi bestämde att vi behöver en variabel Int för att hålla koll på vilken markör som godisen håller över så vi har skapat z som alltid håller koll på detta.
+Jag bestämde att vi behöver en variabel Int för att hålla koll på vilken markör som godisen håller över så vi har skapat z som alltid håller koll på detta.
 2h -- 21/02
 
 
-Vi har skapat en funktion för att markera den godisen som ska flyttas på med en annan färgad rektangel. 
+Jag har skapat en funktion för att markera den godisen som ska flyttas på med en annan färgad rektangel. 
 30 min --21/02
 
 
@@ -37,5 +37,5 @@ Jag har sett till att ifall man markerar en godis och klickar på piltangenterna
 Jag har skapat en funktion som körs vid början av spelet som kollar ifall det finns några rader med 3 eller fler av samma godisar i rad och isåfall gör dessa svarta. Detta kollas genom att rekursivt se om färgen på godis n är samma som på godis n+1. 
 4h 23/02
 
-Skapade en funktion för att byta mellan olika gamestates. Gamestate byts med tangenterna 1 & 2 och är i nuläget endast en svart skärm och spelet.
+Jag skapade en funktion för att byta mellan olika gamestates. Gamestate byts med tangenterna 1 & 2 och är i nuläget endast en svart skärm och spelet.
 1h 23/02
