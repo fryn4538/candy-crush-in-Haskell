@@ -39,3 +39,13 @@ Jag har skapat en funktion som körs vid början av spelet som kollar ifall det 
 
 Jag skapade en funktion för att byta mellan olika gamestates. Gamestate byts med tangenterna 1 & 2 och är i nuläget endast en svart skärm och spelet.
 1h 23/02
+
+
+Skapade funktionerna:
+checkHorizontalRows
+checkHorizontalRowsAux
+checkVerticalRowsAux
+makeBlackV
+makeBlackH
+Dessa funktioner testar nu först ifall det finns 3 eller fler likadana godisar i rad både i vertikal led och i horisontell led. Ifall det finns några sådana rader så skapas en tupel som innehåller vilket index raden startar på, hur många godisar som står i rad och vilken riktning som raden är åt. Dessa tullar läggs sedan in i en lista som skickas till makeBlackV som gör om alla dessa index till svarta godisar. När detta är klart så ska en annan funktion ta bort alla svarta godisar genom att rekursivt flytta dem uppåt ett steg i taget.
+7h 25/02

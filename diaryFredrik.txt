@@ -1,2 +1,10 @@
 2019-02-13 | 1 h 12 min | Skapat ett Github repo och lärt Erik hur man använder.
-2019-02-18 | 10:10 - 12:00 och 13:00 - 17:00 | Vi satt tillsammans för att skapa
+2019-02-18 | 10:10 - 12:00 och 13:00 - 17:00 | Vi satt tillsammans och beslutade om att vi skulle använda oss av paketet Gloss som hjälper till att göra grafik i haskell. Till en början skapade ett rutnät som skulle agera spelplan. Dock gjorde vi det utan en spelloop så nästa steg var att skapa en spelloop. Gloss hade en inbyggd funktion som vi kunde använda, dock var den lite svår att förstå så mestadels av dagen gick åt att få den att funka.
+
+2019-02-19 | 10:00 - 18:00 | Jag och Erik satt tillsammans och jobbade då August dator dog. Vi fixade funktioner för att så att markören kunde röra sig samt funktioner för att rita ut godisar dock endast som fyrkanter.
+
+2019-02-20 | 12:00 - 17:00 | Dynamiskt spelbräde random nummer också
+
+2019-02-21 | 10:00 - 15:00 | Under torsdagen samlades vi och tänkte igenom hur vi ville att spelet skulle fungera och kom på att vi behövde bygga om koden från nästintill grunden. Detta pga sättet vi ville behandla listorna och godisarna på inte alls funkade med vår struktur så vi skapade en typ Candy som håller koll på godisens koordinater, index i listan samt färg. Därefter lade vi till ett attribut i Player som håller en lista av Candy och denna lista är alla godisar på hela spelplanen.
+
+2019-02-22 | 10:00 - 12:30 | Tidigare kunde vi röra markören med piltangenterna men vi kunde inte välja en ruta för att flytta godisarna. Genom att lägga till ett extra attribut till datatypen Player som håller koll på 
