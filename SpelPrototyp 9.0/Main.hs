@@ -440,5 +440,20 @@ squareLocations int (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2
 scoreDisp :: Player -> Picture
 scoreDisp player = text (show (score player))
 
+
+{- updateScor player
+Updates the amount of completed moves by 1.
+PRE: True
+
+-}
 updateScore :: Player -> Int
 updateScore player = (score player) + 1 
+
+{- functionIdentifier arguments
+     A brief human-readable description of the purpose of the function.
+     PRE:  ... pre-condition on the arguments, if any ...
+     RETURNS: ... description of the result, in terms of the arguments ...
+     SIDE EFFECTS: ... side effects, if any, including exceptions ...
+     EXAMPLES: ... especially if useful to highlight delicate issues; also consider including counter-examples ...
+  -}
+{-functionIdentifier :: argumentType -> resultType-}
