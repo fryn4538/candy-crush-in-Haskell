@@ -1,51 +1,87 @@
-Fixade git. -1h --13/02
 
+----------
+Fixade git. 
+1h --13/02
+
+----------
 Jag undersökte hur man skapar en GameLoop i Haskell genom att följa olika guider online.
 Valde att studera en gameLoop till ett pong spel och implementera de delar som passade vårt spel.
--5h --18/02
+5h --18/02
 
+----------
 Skapade en markör som går att flytta för att välja godis att flytta på.
--2h --18/02
+2h --18/02
 
+----------
 Städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet.
--2h --18/02
+2h --18/02
 
+----------
 Jag ritade första godisarna i paint.
--15Min --20/02
+15Min --20/02
 
+----------
 Jag har skapat en enklare kodstruktur där man kan ändra spelstorleken från 5x5 till 9x9 med en variabeländring
 1.5h --20/02
 
+----------
 Skapat ett system för slumpgenerering av godisfärger med hjälp av system.random. Detta är endast en form av placeholder för att förstå hur godisarna ritas ut.
 6h -- 20/02
- 
+
+----------
 Vi har stött på ett problem där våra datatyper inte är optimala för att få koden att fungera och har arbetat mycket på att ordna detta. Vi har nu skapat en datatyp Candy som innehåller (((X-Kordinat, Y-Kordinat), Godisnummer), Färg)
 2h -- 21/02
 
-
+----------
 Jag bestämde att vi behöver en variabel Int för att hålla koll på vilken markör som godisen håller över så vi har skapat z som alltid håller koll på detta.
 2h -- 21/02
 
 
+----------
 Jag har skapat en funktion för att markera den godisen som ska flyttas på med en annan färgad rektangel. 
 30 min --21/02
 
 
+----------
 Jag har sett till att ifall man markerar en godis och klickar på piltangenterna för att byta plats på denna så får man en return True eller False ifall bytet är tillåtet. Alltså så länge det finns en godis bredvid att byta med och man inte försöker byta med en godis neråt när man är längst ner på spelplanen. Jag har även skapat en funktion för att byta plats på två godisar genom att markera dem med [Enter] och sedan trycka på piltangenterna.
 4h -- 22/02
 
+----------
 Jag har skapat en funktion som körs vid början av spelet som kollar ifall det finns några rader med 3 eller fler av samma godisar i rad och isåfall gör dessa svarta. Detta kollas genom att rekursivt se om färgen på godis n är samma som på godis n+1. 
-4h 23/02
+4h -- 23/02
 
+----------
 Jag skapade en funktion för att byta mellan olika gamestates. Gamestate byts med tangenterna 1 & 2 och är i nuläget endast en svart skärm och spelet.
-1h 23/02
+1h -- 23/02
 
-
+----------
 Skapade funktionerna:
 checkHorizontalRows
-checkHorizontalRowsAux
-checkVerticalRowsAux
+checkRows
+checkVerticalRows
 makeBlackV
 makeBlackH
 Dessa funktioner testar nu först ifall det finns 3 eller fler likadana godisar i rad både i vertikal led och i horisontell led. Ifall det finns några sådana rader så skapas en tupel som innehåller vilket index raden startar på, hur många godisar som står i rad och vilken riktning som raden är åt. Dessa tullar läggs sedan in i en lista som skickas till makeBlackV som gör om alla dessa index till svarta godisar. När detta är klart så ska en annan funktion ta bort alla svarta godisar genom att rekursivt flytta dem uppåt ett steg i taget.
-7h 25/02
+7h -- 25/02
+
+----------
+Idag arbetade vi på att förbättra hur spelet funkade och skrev kommentarer samt skapade funktioner för att få nya slumpade godisar att falla ner när en rad av 3 eller fler godisar försvann.
+Jag hjälpte till med att rätta till funktionerna:
+
+mkAllCol
+makeAllColor
+recolor
+
+samt såg till att implementera hur dessa kallas på av HandleKeys.
+
+skrivit kommentarer för 
+HandleKeys
+verifyMoveCandy
+verifySwapCandy
+checkRows
+checkHorizontalRows
+checkVerticalRows
+moveCandy
+moveCandyAux
+5h -- 26/02
+ 
