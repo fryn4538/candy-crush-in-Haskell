@@ -49,10 +49,10 @@ offset = 100
 --PRE: boxes >= 5 or the game will crash
 
 boxes :: Float
-boxes = 6
+boxes = 9
 
 boxesInt :: Int
-boxesInt = 6
+boxesInt = 9
 
 ---------------------------- Mainfunktionen ----------------------------------------------------
 {-- | Play a game in a window.
@@ -198,17 +198,8 @@ playAux ind color color2 direction ((((a,b),int),col):xs)
        | int == (ind-(boxesInt)) && direction == "Up"=  [(((a,b),int),color2)] ++ playAux ind color color2 "Empty" xs
        | int == (ind+(boxesInt)) && direction == "Down"=  [(((a,b),int),color2)] ++ playAux ind color color2 "Empty" xs
        | otherwise  = [(((a,b),int),col)] ++ playAux ind color color2 direction xs
--- snd(fst(fst (candybank !! index)))
 
---Takes the current gamestate and returns a new gamestate where candies that have been placed in a row are removed.
-{-
-checkIfInRow :: [Candy] -> Int -> [Candy]
-checkIfInRow (listHead:[]) _ =  
-checkIfInRow (listHead:listTail) acc
-                                 | snd(listHead) == snd(head(listTail)) = checkIfInRow listTail (acc+1)
-                                 | snd(listHead) /= snd(head(listTail)) && acc >= 3 = trace ("You got 3 in a row") $ checkIfInRow listTail 0
-                                 | otherwise = checkIfInRow listTail 0
--}
+
 
 checkHorizontalRows :: [Candy] -> Int -> [Candy]
 checkHorizontalRows list n
@@ -245,21 +236,7 @@ checkVerticalRowsAux index startIndex counter row listOfRows unchanged
         colorCheck = (snd(unchanged !! (floor (index-1))) == snd(unchanged !! ((floor (index-1)) + boxesInt)))
         blackCheck = (snd(unchanged !! (floor (index-1))) /= black)
 
-{-
-checkVerticalRowsAux :: Float -> Float -> Int -> Float -> [((Float,Int),String)] -> [Candy]  -> [Candy]
-checkVerticalRowsAux index startIndex counter row listOfRows unchanged
-      | index == (boxes*boxes) && snd(unchanged !! (floor (index-(boxes+1)))) == snd(unchanged !! ((floor (index-1)))) && counter > 1  = trace ("List of Rows = " ++ show listOfRows) $ makeBlackV (((startIndex,(counter+1)),"V"):listOfRows) 0 unchanged
-      | index == (boxes*boxes) = makeBlackV listOfRows 0 unchanged 
-      | index > (boxes*(boxes-1)) && counter <= 1 = checkVerticalRowsAux (row+1) startIndex 0 (row+1) listOfRows unchanged
-      | index > (boxes*(boxes-1)) && counter > 1 =  checkVerticalRowsAux (row+1) startIndex 0 (row+1) (((startIndex,(counter+1)),"V"):listOfRows) unchanged
-      | snd(unchanged !! (floor (index-1))) == snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter == 0 && snd(unchanged !! (floor (index-1))) /= black = checkVerticalRowsAux (index+boxes) index (counter+1) row listOfRows unchanged
-      | snd(unchanged !! (floor (index-1))) == snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter > 0 && snd(unchanged !! (floor (index-1))) /= black =  checkVerticalRowsAux (index+boxes) startIndex (counter+1) row listOfRows unchanged
-      |snd(unchanged !! (floor (index-1))) /= snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter > 1 =checkVerticalRowsAux (index+boxes) 0 0 row (((startIndex,(counter+1)),"V"):listOfRows) unchanged
-      | snd(unchanged !! (floor (index-1))) /= snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter <= 1 =checkVerticalRowsAux (index+boxes) 0 0 row listOfRows unchanged
-      | otherwise = checkVerticalRowsAux (index+boxes) 0 0 row listOfRows unchanged 
--}
---candyBank =  mkAllCol (checkHorizontalRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12),
-                    
+              
 mkAllCol :: [Candy] -> [Color] -> [Candy]
 mkAllCol list colorBank = makeAllColor list [] colorBank
 
@@ -356,11 +333,7 @@ updateLocationX bank z = fst(fst(fst( bank !! z)))
 updateLocationY :: [Candy] -> Int -> Float
 updateLocationY bank z = snd(fst(fst( bank !! z)))
 
---moveSquareAux :: Candy -> Player
---moveSquareAux (((a,b),int),col) = Player {squareLoc = (a,b), squareIndex = int}
---type Candy = (((Float,Float),Int),Color)
---updateLocation
-    
+
 
 -- tar 0, lista med colors, candyLocations (boxes (200,-200) [(((200,-200),0),white)]
 
@@ -426,25 +399,51 @@ paintRectangles :: [(Float,Float)] -> [Picture]
 paintRectangles [] = []
 paintRectangles ((a,b):xs) = [Color red $ translate a b $ lineLoop $ rectanglePath 100 100] ++  paintRectangles xs
 
-{-
+{- squareLocations num
+Calculates the positions of the squares on the board.
 PRE: Börjar på (-200,200)
+
 -}
 squareLocations :: Float -> (Float, Float)-> [(Float,Float)]
 squareLocations 0  (a,b)
   | a > 200 && b < (-((boxes*100)-400)) = []
   | otherwise = squareLocations boxes ((-200), b-100)
  
-squareLocations int (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ squareLocations (int-1) (a+100,b)
+squareLocations num (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ squareLocations (num-1) (a+100,b)
 
 
+
+{- scoreDisp player
+   Converts the score attribute in player into a Picture instead of a Int. 
+   PRE: True
+   RETURNS: A Picture of the score in player.
+   SIDE EFFECTS: 
+   EXAMPLES: updateScore (Player {squareLoc = (100,100),
+                                  squareIndex = 1,
+                                  playerColor = white,
+                                  colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
+                                  candyBank =  [(((100,100),1),black)],         
+                                  moveState = False,
+                                  gameState = 2,
+                                  score = 1})                  --> Text "1"
+-}
 scoreDisp :: Player -> Picture
 scoreDisp player = text (show (score player))
 
 
-{- updateScor player
-Updates the amount of completed moves by 1.
-PRE: True
-
+{- updateScore player
+   Updates the amount of completed moves by 1.
+   PRE: True
+   RETURNS: A player with the attribute score increased by 1.
+   SIDE EFFECTS: Changes the attribute score in the Player datatype.
+   EXAMPLES: updateScore (Player {squareLoc = (100,100),
+                                  squareIndex = 1,
+                                  playerColor = white,
+                                  colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
+                                  candyBank =  [(((100,100),1),black)],         
+                                  moveState = False,
+                                  gameState = 2,
+                                  score = 0})                  --> 1
 -}
 updateScore :: Player -> Int
 updateScore player = (score player) + 1 
