@@ -1,3 +1,4 @@
+
 module Main(main) where
 import System.IO.Unsafe  -- be careful! 
 import Debug.Trace
@@ -11,7 +12,7 @@ import Data.Array
 import Graphics.Gloss.Data.Picture
 import System.Random
 import Control.Monad
-
+import Control.Concurrent
 
 
 
@@ -31,8 +32,11 @@ data Player = Player
      squareIndex :: Float,
      candyBank :: [Candy],
      moveState :: Bool,
-     gameState :: Int
+     gameState :: Int,
+     colorBank :: [Color]
   } deriving Show
+--delay :: c -> IO a -> IO a
+--delay _ _ = threadDelay 10000 >> 10000
 
 -- In order to get random candies we chose a random element from a list.
 -- Saved values --
@@ -44,10 +48,10 @@ offset = 100
 --PRE: boxes >= 5 or the game will crash
 
 boxes :: Float
-boxes = 9
+boxes = 6
 
 boxesInt :: Int
-boxesInt = 9
+boxesInt = 6
 
 ---------------------------- Mainfunktionen ----------------------------------------------------
 {-- | Play a game in a window.
@@ -86,7 +90,8 @@ initialState =  Player {
                        squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
                        squareIndex = 1,
                        playerColor = white,
-                       candyBank =  (moveBlack (checkHorizontalRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12)),
+                       colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
+                       candyBank =  mkAllCol (checkHorizontalRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))) ,         
                        moveState = False,
                        gameState = 2
                        }
@@ -103,10 +108,15 @@ render player
 
 
 --  Draw a candy game state (convert it to a picture).
---render :: Player ->  Picture
---render player = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker rose $  squareLoc player] ++ (paintCandy $ createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))))
-
---  Respond to key events.
+{- HandleKeys Event
+     Receives a keystate and performs a functioncall depending on what key is pressed in what way.
+     RETURNS: a new gamestate depending on wich key is pressed.
+     Keyup: Returns a gamestate where player position in candyList is changed to be n less.
+     KeyDown: Returns a gamestate where player position in candyList is changed to be n more.
+     KeyRight: Returns a gamestate where player position in candyList is changed to be 1 more.
+     KeyLeft: Returns a gamestate where player position in candyList is changed to be 1 less.
+     EXAMPLES: handleKeys (EventKey (Char '2') Down _ _) player == player {gameState = 2}
+  -}
 handleKeys :: Event -> Player -> Player
 --handleKeys (EventKey (Char '3') Down _ _) player = player { candyBank =  removeCandy (candyBank player)}
 handleKeys (EventKey (Char '2') Down _ _) player = player {gameState = 2}
@@ -116,22 +126,22 @@ handleKeys (EventKey (Char '1') Down _ _) player = player {gameState = 1}
 -- Lagt in gaurds för att vi ska kunna se om spelaren vill flytta eller
 -- Upp = squareIndex - boxesInt
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
-  | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, moveState = False, candyBank = (moveBlack (moveCandy (squareIndex player) "Up" (candyBank player)))}
+  | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Up" (candyBank player)) (colorBank player)}
   | otherwise = moveSquare 0 100 player
 
 -- down = squareIndex - boxesInt
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player
-  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, moveState = False, candyBank = (moveBlack (moveCandy (squareIndex player) "Down" (candyBank player))) }
+  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player)}
   | otherwise = moveSquare 0 (-100) player
 
 -- left = squareIndex - 1 
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player
-  | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, moveState = False, candyBank = (moveBlack (moveCandy (squareIndex player) "Left" (candyBank player))) }
+  | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Left" (candyBank player)) (colorBank player)}
   | otherwise = moveSquare (-100) 0 player
 
 -- left = squareIndex + 1
 handleKeys (EventKey (SpecialKey KeyRight) Down _ _) player
-  | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, moveState = False, candyBank = (moveBlack (moveCandy (squareIndex player) "Right" (candyBank player)))}
+  | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Right" (candyBank player)) (colorBank player)}
   | otherwise = moveSquare 100 0 player
   
 handleKeys (EventKey (SpecialKey KeyEnter) Down _ _) player
@@ -140,7 +150,15 @@ handleKeys (EventKey (SpecialKey KeyEnter) Down _ _) player
   
 handleKeys _ player = player
 
-
+ {- verifyMoveCandy moveX moveY index
+     If a player tries to swap a candy this function checks wether or not the swap makes sense. (If there is a candy to swap with)
+     RETURNS: A Boolean, true or False
+     EXAMPLES:
+     verifyMoveCandy 100 0 1 == False
+     verifyMoveCandy 100 0 10 == True
+     If we are located on the upper row of the gameboard and try to go up it returns false.
+    
+  -}
 verifyMoveCandy :: Float -> Float -> Float -> Bool
 verifyMoveCandy moveX moveY index   | mod (floor index) boxesInt == 1 && moveX < 0 =  False
                                     | mod (floor index) boxesInt == 0 && moveX > 0 =  False
@@ -150,10 +168,10 @@ verifyMoveCandy moveX moveY index   | mod (floor index) boxesInt == 1 && moveX <
 
 --Trycker man enter och en piltangen 2 ggr så flyttas markören även fast den inte skapar 3 i rad.
 verifySwapCandy :: Float -> [Candy] -> String -> Bool
-verifySwapCandy index candyList "Up" = moveCandy index "Up" candyList == playAux (floor index) (snd(candyList !! floor(index-(boxes+1)))) (snd(candyList !! (floor (index-1)))) "Up" candyList
-verifySwapCandy index candyList "Down" = moveCandy index "Down" candyList == playAux (floor index) (snd(candyList !! floor(index-(boxes+1)))) (snd(candyList !! (floor (index-1)))) "Down" candyList
-verifySwapCandy index candyList "Right" = moveCandy index "Right" candyList == playAux (floor index) (snd(candyList !! floor(index-(boxes+1)))) (snd(candyList !! (floor (index-1)))) "Right" candyList
-verifySwapCandy index candyList "Left" = moveCandy index "Left" candyList  == playAux (floor index) (snd(candyList !! floor(index-(boxes+1)))) (snd(candyList !! (floor (index-1)))) "Left" candyList
+verifySwapCandy index candyList "Up" = moveCandy index "Up" candyList == (playAux (floor index) (snd(candyList !! floor(index-(boxes+1)))) (snd(candyList !! (floor (index-1)))) "Up" candyList) 
+verifySwapCandy index candyList "Down" = moveCandy index "Down" candyList == (playAux (floor index) (snd(candyList !! floor(index+(boxes-1)))) (snd(candyList !! (floor (index-1)))) "Down" candyList) 
+verifySwapCandy index candyList "Right" = moveCandy index "Right" candyList == (playAux (floor (index)) (snd(candyList !! floor(index))) (snd(candyList !! (floor (index-1)))) "Right" candyList) 
+verifySwapCandy index candyList "Left" = moveCandy index "Left" candyList  == (playAux (floor (index)) (snd(candyList !! floor(index-2))) (snd(candyList !! (floor (index-1)))) "Left" candyList) 
 
 moveCandy :: Float -> String -> [Candy] -> [Candy]
 moveCandy index "Right" candyList =  checkHorizontalRows(playAux (floor (index)) (snd(candyList !! floor(index))) (snd(candyList !! (floor (index-1)))) "Right" candyList) 4
@@ -238,25 +256,30 @@ checkVerticalRowsAux index startIndex counter row listOfRows unchanged
       | snd(unchanged !! (floor (index-1))) /= snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter <= 1 =checkVerticalRowsAux (index+boxes) 0 0 row listOfRows unchanged
       | otherwise = checkVerticalRowsAux (index+boxes) 0 0 row listOfRows unchanged 
 -}
+--candyBank =  mkAllCol (checkHorizontalRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12),
+                    
+mkAllCol :: [Candy] -> [Color] -> [Candy]
+mkAllCol list colorBank = makeAllColor list [] colorBank
 
-recolor :: [Candy] -> [Color] -> [Candy]
+makeAllColor :: [Candy] -> [Candy]-> [Color] -> [Candy]
+makeAllColor [] list _ = list
+makeAllColor list temp colors
+  | snd (head list) == black = trace ("Length of colorBank = " ++ show (length colors)) $ makeAllColor (checkHorizontalRows (recolor (moveBlack (checkHorizontalRows (temp ++ list) 1)) colors) 1) [] (tail colors)
+  | otherwise = makeAllColor (tail list) (temp ++ [(head list)]) colors
+
+recolor :: [Candy] -> [Color] ->[Candy]
 recolor [] _ = [] 
-recolor ((((a,b),int),col):xs) randColor
-  | col == black = [(((a,b),int),(head(randColor)))] ++ recolor xs (tail(randColor))
-  | otherwise = [(((a,b),int),col)] ++ recolor xs randColor
-   where randColor = randColorGen (unsafePerformIO (randListGen (100)))
-         
-
-
-
+recolor ((((a,b),int),col):xs) (c:cs)
+  | col == black = [(((a,b),int),c)] ++ recolor xs cs
+  | otherwise = [(((a,b),int),col)] ++ recolor xs (c:cs)
     
 moveBlack :: [Candy] -> [Candy]
 moveBlack list = (moveBlackAux list (boxesInt) (boxesInt + 1))
 
 moveBlackAux :: [Candy] -> Int -> Int -> [Candy]
 moveBlackAux list n m
-  | n <= 0 = trace ("n: " ++ show n ++ ", m: " ++ show m) $ list
-  | m > ((boxesInt * boxesInt) - 1) = trace ("n: " ++ show n ++ ", m: " ++ show m) $ moveBlackAux list (n-1) (boxesInt + 1)
+  | n <= 0 = trace ("n1: " ++ show n ++ ", m: " ++ show m) $ list
+  | m > ((boxesInt * boxesInt)) = trace ("n2: " ++ show n ++ ", m: " ++ show m) $ moveBlackAux list (n-1) (boxesInt + 1)
   | (snd (list !! (m-1))) == black = trace ("moved up" ++ "n: " ++ show n ++ ", m: " ++ show m) $ moveBlackAux (moveCandy (fromIntegral m) "Up" list) n (m+1)
   | otherwise = moveBlackAux list n (m+1)
 
@@ -373,17 +396,19 @@ mkMarker player (x,y) = pictures
 
 
 randListGen :: Int -> IO([Int])
-randListGen n = replicateM n $ randomRIO (1,4)
+randListGen n = replicateM n $ randomRIO (1,7)
 
 randColorGen :: [Int] -> [Color]
 randColorGen [] = []
 randColorGen list = [getColor (head list)] ++ randColorGen (tail list)
 
-
 getColor :: Int -> Color
 getColor n | n == 1 = red
            | n == 2 = white
            | n == 3 = blue
+           | n == 4 = dark (dark violet)
+           | n == 5 = rose
+           | n == 6 = dark green
            | otherwise = yellow
 
 
