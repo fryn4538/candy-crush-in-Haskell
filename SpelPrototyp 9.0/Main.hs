@@ -33,7 +33,8 @@ data Player = Player
      candyBank :: [Candy],
      moveState :: Bool,
      gameState :: Int,
-     colorBank :: [Color]
+     colorBank :: [Color],
+     score :: Int
   } deriving Show
 --delay :: c -> IO a -> IO a
 --delay _ _ = threadDelay 10000 >> 10000
@@ -93,7 +94,8 @@ initialState =  Player {
                        colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
                        candyBank =  mkAllCol (checkHorizontalRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))) ,         
                        moveState = False,
-                       gameState = 2
+                       gameState = 2,
+                       score = 0
                        }
 
 --initialCandy :: CandyBank
@@ -104,7 +106,7 @@ initialState =  Player {
 render :: Player -> Picture
 render player
    | (gameState player) == 1 = pictures [rectangleWire1]
-   | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player))
+   | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)])
 
 
 --  Draw a candy game state (convert it to a picture).
@@ -126,22 +128,22 @@ handleKeys (EventKey (Char '1') Down _ _) player = player {gameState = 1}
 -- Lagt in gaurds för att vi ska kunna se om spelaren vill flytta eller
 -- Upp = squareIndex - boxesInt
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
-  | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Up" (candyBank player)) (colorBank player)}
+  | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Up" (candyBank player)) (colorBank player), score = (updateScore player)}
   | otherwise = moveSquare 0 100 player
 
 -- down = squareIndex - boxesInt
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player
-  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player)}
+  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = (updateScore player)}
   | otherwise = moveSquare 0 (-100) player
 
 -- left = squareIndex - 1 
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player
-  | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Left" (candyBank player)) (colorBank player)}
+  | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Left" (candyBank player)) (colorBank player), score = (updateScore player)}
   | otherwise = moveSquare (-100) 0 player
 
 -- left = squareIndex + 1
 handleKeys (EventKey (SpecialKey KeyRight) Down _ _) player
-  | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Right" (candyBank player)) (colorBank player)}
+  | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = mkAllCol (moveCandy (squareIndex player) "Right" (candyBank player)) (colorBank player), score = (updateScore player)}
   | otherwise = moveSquare 100 0 player
   
 handleKeys (EventKey (SpecialKey KeyEnter) Down _ _) player
@@ -435,5 +437,8 @@ squareLocations 0  (a,b)
 squareLocations int (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ squareLocations (int-1) (a+100,b)
 
 
+scoreDisp :: Player -> Picture
+scoreDisp player = text (show (score player))
 
-
+updateScore :: Player -> Int
+updateScore player = (score player) + 1 
