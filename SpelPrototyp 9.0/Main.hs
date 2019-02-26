@@ -13,7 +13,7 @@ import Graphics.Gloss.Data.Picture
 import System.Random
 import Control.Monad
 import Control.Concurrent
-
+import Test.HUnit
 
 
 type Candy = (((Float,Float),Int),Color)

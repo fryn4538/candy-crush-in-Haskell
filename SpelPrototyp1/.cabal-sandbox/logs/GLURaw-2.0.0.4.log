@@ -1,0 +1,1031 @@
+cabal: Entering directory '/var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/cabal-tmp-17262/GLURaw-2.0.0.4'
+Configuring GLURaw-2.0.0.4...
+Building GLURaw-2.0.0.4...
+Preprocessing library GLURaw-2.0.0.4...
+[1 of 6] Compiling Graphics.GLU.TypesInternal ( src/Graphics/GLU/TypesInternal.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/TypesInternal.o )
+[2 of 6] Compiling Graphics.GLU.Types ( src/Graphics/GLU/Types.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/Types.o )
+[3 of 6] Compiling Graphics.GLU.Tokens ( src/Graphics/GLU/Tokens.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/Tokens.o )
+[4 of 6] Compiling Graphics.GLU.Functions ( src/Graphics/GLU/Functions.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/Functions.o )
+[5 of 6] Compiling Graphics.GLU.Callbacks ( src/Graphics/GLU/Callbacks.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/Callbacks.o )
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc26383_0/ghc_29.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc26383_0/ghc_37.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+[6 of 6] Compiling Graphics.GLU     ( src/Graphics/GLU.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU.o )
+[1 of 6] Compiling Graphics.GLU.TypesInternal ( src/Graphics/GLU/TypesInternal.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/TypesInternal.p_o )
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc26429_0/ghc_9.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+[2 of 6] Compiling Graphics.GLU.Types ( src/Graphics/GLU/Types.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/Types.p_o )
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc26429_0/ghc_18.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+[3 of 6] Compiling Graphics.GLU.Tokens ( src/Graphics/GLU/Tokens.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/Tokens.p_o )
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc26429_0/ghc_27.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+[4 of 6] Compiling Graphics.GLU.Functions ( src/Graphics/GLU/Functions.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/Functions.p_o )
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc26429_0/ghc_36.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+[5 of 6] Compiling Graphics.GLU.Callbacks ( src/Graphics/GLU/Callbacks.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU/Callbacks.p_o )
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc26429_0/ghc_45.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+[6 of 6] Compiling Graphics.GLU     ( src/Graphics/GLU.hs, dist/dist-sandbox-4c142bec/build/Graphics/GLU.p_o )
+
+In file included from /var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/ghc26429_0/ghc_54.c:2:0: error:
+    
+
+In file included from /Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/Rts.h:217:0: error:
+    
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF || ZERO_SLOP_FOR_SANITY_CHECK
+                              ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:505:31: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:523:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:5: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:502:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_LDV_PROF'
+#define ZERO_SLOP_FOR_LDV_PROF     (defined(PROFILING))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if ZERO_SLOP_FOR_LDV_PROF && !ZERO_SLOP_FOR_SANITY_CHECK
+                               ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:37: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                    ^
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:552:32: error:
+     warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+
+/Library/Frameworks/GHC.framework/Versions/8.0.2-x86_64/usr/lib/ghc-8.0.2/include/rts/storage/ClosureMacros.h:503:56: error:
+     note: expanded from macro 'ZERO_SLOP_FOR_SANITY_CHECK'
+#define ZERO_SLOP_FOR_SANITY_CHECK (defined(DEBUG) && !defined(THREADED_RTS))
+                                                       ^
+9 warnings generated.
+Running Haddock for GLURaw-2.0.0.4...
+Preprocessing library GLURaw-2.0.0.4...
+Haddock coverage:
+  25% (  1 /  4) in 'Graphics.GLU.TypesInternal'
+  Missing documentation for:
+    GLUnurbs (src/Graphics/GLU/TypesInternal.hs:18)
+    GLUquadric (src/Graphics/GLU/TypesInternal.hs:20)
+    GLUtesselator (src/Graphics/GLU/TypesInternal.hs:22)
+  25% (  1 /  4) in 'Graphics.GLU.Types'
+  Missing documentation for:
+    GLUnurbs (src/Graphics/GLU/TypesInternal.hs:18)
+    GLUquadric (src/Graphics/GLU/TypesInternal.hs:20)
+    GLUtesselator (src/Graphics/GLU/TypesInternal.hs:22)
+   1% (  1 /150) in 'Graphics.GLU.Tokens'
+  Missing documentation for:
+    GLU_FALSE (src/Graphics/GLU/Tokens.hs:26)
+    GLU_TRUE (src/Graphics/GLU/Tokens.hs:27)
+    GLU_VERSION (src/Graphics/GLU/Tokens.hs:30)
+    GLU_EXTENSIONS (src/Graphics/GLU/Tokens.hs:31)
+    GLU_INVALID_ENUM (src/Graphics/GLU/Tokens.hs:34)
+    GLU_INVALID_VALUE (src/Graphics/GLU/Tokens.hs:35)
+    GLU_OUT_OF_MEMORY (src/Graphics/GLU/Tokens.hs:36)
+    GLU_INCOMPATIBLE_GL_VERSION (src/Graphics/GLU/Tokens.hs:37)
+    GLU_INVALID_OPERATION (src/Graphics/GLU/Tokens.hs:38)
+    GLU_OUTLINE_POLYGON (src/Graphics/GLU/Tokens.hs:42)
+    GLU_OUTLINE_PATCH (src/Graphics/GLU/Tokens.hs:43)
+    GLU_NURBS_ERROR (src/Graphics/GLU/Tokens.hs:46)
+    GLU_ERROR (src/Graphics/GLU/Tokens.hs:47)
+    GLU_NURBS_BEGIN (src/Graphics/GLU/Tokens.hs:48)
+    GLU_NURBS_BEGIN_EXT (src/Graphics/GLU/Tokens.hs:49)
+    GLU_NURBS_VERTEX (src/Graphics/GLU/Tokens.hs:50)
+    GLU_NURBS_VERTEX_EXT (src/Graphics/GLU/Tokens.hs:51)
+    GLU_NURBS_NORMAL (src/Graphics/GLU/Tokens.hs:52)
+    GLU_NURBS_NORMAL_EXT (src/Graphics/GLU/Tokens.hs:53)
+    GLU_NURBS_COLOR (src/Graphics/GLU/Tokens.hs:54)
+    GLU_NURBS_COLOR_EXT (src/Graphics/GLU/Tokens.hs:55)
+    GLU_NURBS_TEXTURE_COORD (src/Graphics/GLU/Tokens.hs:56)
+    GLU_NURBS_TEX_COORD_EXT (src/Graphics/GLU/Tokens.hs:57)
+    GLU_NURBS_END (src/Graphics/GLU/Tokens.hs:58)
+    GLU_NURBS_END_EXT (src/Graphics/GLU/Tokens.hs:59)
+    GLU_NURBS_BEGIN_DATA (src/Graphics/GLU/Tokens.hs:60)
+    GLU_NURBS_BEGIN_DATA_EXT (src/Graphics/GLU/Tokens.hs:61)
+    GLU_NURBS_VERTEX_DATA (src/Graphics/GLU/Tokens.hs:62)
+    GLU_NURBS_VERTEX_DATA_EXT (src/Graphics/GLU/Tokens.hs:63)
+    GLU_NURBS_NORMAL_DATA (src/Graphics/GLU/Tokens.hs:64)
+    GLU_NURBS_NORMAL_DATA_EXT (src/Graphics/GLU/Tokens.hs:65)
+    GLU_NURBS_COLOR_DATA (src/Graphics/GLU/Tokens.hs:66)
+    GLU_NURBS_COLOR_DATA_EXT (src/Graphics/GLU/Tokens.hs:67)
+    GLU_NURBS_TEXTURE_COORD_DATA (src/Graphics/GLU/Tokens.hs:68)
+    GLU_NURBS_TEX_COORD_DATA_EXT (src/Graphics/GLU/Tokens.hs:69)
+    GLU_NURBS_END_DATA (src/Graphics/GLU/Tokens.hs:70)
+    GLU_NURBS_END_DATA_EXT (src/Graphics/GLU/Tokens.hs:71)
+    GLU_NURBS_ERROR1 (src/Graphics/GLU/Tokens.hs:74)
+    GLU_NURBS_ERROR2 (src/Graphics/GLU/Tokens.hs:75)
+    GLU_NURBS_ERROR3 (src/Graphics/GLU/Tokens.hs:76)
+    GLU_NURBS_ERROR4 (src/Graphics/GLU/Tokens.hs:77)
+    GLU_NURBS_ERROR5 (src/Graphics/GLU/Tokens.hs:78)
+    GLU_NURBS_ERROR6 (src/Graphics/GLU/Tokens.hs:79)
+    GLU_NURBS_ERROR7 (src/Graphics/GLU/Tokens.hs:80)
+    GLU_NURBS_ERROR8 (src/Graphics/GLU/Tokens.hs:81)
+    GLU_NURBS_ERROR9 (src/Graphics/GLU/Tokens.hs:82)
+    GLU_NURBS_ERROR10 (src/Graphics/GLU/Tokens.hs:83)
+    GLU_NURBS_ERROR11 (src/Graphics/GLU/Tokens.hs:84)
+    GLU_NURBS_ERROR12 (src/Graphics/GLU/Tokens.hs:85)
+    GLU_NURBS_ERROR13 (src/Graphics/GLU/Tokens.hs:86)
+    GLU_NURBS_ERROR14 (src/Graphics/GLU/Tokens.hs:87)
+    GLU_NURBS_ERROR15 (src/Graphics/GLU/Tokens.hs:88)
+    GLU_NURBS_ERROR16 (src/Graphics/GLU/Tokens.hs:89)
+    GLU_NURBS_ERROR17 (src/Graphics/GLU/Tokens.hs:90)
+    GLU_NURBS_ERROR18 (src/Graphics/GLU/Tokens.hs:91)
+    GLU_NURBS_ERROR19 (src/Graphics/GLU/Tokens.hs:92)
+    GLU_NURBS_ERROR20 (src/Graphics/GLU/Tokens.hs:93)
+    GLU_NURBS_ERROR21 (src/Graphics/GLU/Tokens.hs:94)
+    GLU_NURBS_ERROR22 (src/Graphics/GLU/Tokens.hs:95)
+    GLU_NURBS_ERROR23 (src/Graphics/GLU/Tokens.hs:96)
+    GLU_NURBS_ERROR24 (src/Graphics/GLU/Tokens.hs:97)
+    GLU_NURBS_ERROR25 (src/Graphics/GLU/Tokens.hs:98)
+    GLU_NURBS_ERROR26 (src/Graphics/GLU/Tokens.hs:99)
+    GLU_NURBS_ERROR27 (src/Graphics/GLU/Tokens.hs:100)
+    GLU_NURBS_ERROR28 (src/Graphics/GLU/Tokens.hs:101)
+    GLU_NURBS_ERROR29 (src/Graphics/GLU/Tokens.hs:102)
+    GLU_NURBS_ERROR30 (src/Graphics/GLU/Tokens.hs:103)
+    GLU_NURBS_ERROR31 (src/Graphics/GLU/Tokens.hs:104)
+    GLU_NURBS_ERROR32 (src/Graphics/GLU/Tokens.hs:105)
+    GLU_NURBS_ERROR33 (src/Graphics/GLU/Tokens.hs:106)
+    GLU_NURBS_ERROR34 (src/Graphics/GLU/Tokens.hs:107)
+    GLU_NURBS_ERROR35 (src/Graphics/GLU/Tokens.hs:108)
+    GLU_NURBS_ERROR36 (src/Graphics/GLU/Tokens.hs:109)
+    GLU_NURBS_ERROR37 (src/Graphics/GLU/Tokens.hs:110)
+    GLU_AUTO_LOAD_MATRIX (src/Graphics/GLU/Tokens.hs:113)
+    GLU_CULLING (src/Graphics/GLU/Tokens.hs:114)
+    GLU_SAMPLING_TOLERANCE (src/Graphics/GLU/Tokens.hs:115)
+    GLU_DISPLAY_MODE (src/Graphics/GLU/Tokens.hs:116)
+    GLU_PARAMETRIC_TOLERANCE (src/Graphics/GLU/Tokens.hs:117)
+    GLU_SAMPLING_METHOD (src/Graphics/GLU/Tokens.hs:118)
+    GLU_U_STEP (src/Graphics/GLU/Tokens.hs:119)
+    GLU_V_STEP (src/Graphics/GLU/Tokens.hs:120)
+    GLU_NURBS_MODE (src/Graphics/GLU/Tokens.hs:121)
+    GLU_NURBS_MODE_EXT (src/Graphics/GLU/Tokens.hs:122)
+    GLU_NURBS_TESSELLATOR (src/Graphics/GLU/Tokens.hs:123)
+    GLU_NURBS_TESSELLATOR_EXT (src/Graphics/GLU/Tokens.hs:124)
+    GLU_NURBS_RENDERER (src/Graphics/GLU/Tokens.hs:125)
+    GLU_NURBS_RENDERER_EXT (src/Graphics/GLU/Tokens.hs:126)
+    GLU_OBJECT_PARAMETRIC_ERROR (src/Graphics/GLU/Tokens.hs:129)
+    GLU_OBJECT_PARAMETRIC_ERROR_EXT (src/Graphics/GLU/Tokens.hs:130)
+    GLU_OBJECT_PATH_LENGTH (src/Graphics/GLU/Tokens.hs:131)
+    GLU_OBJECT_PATH_LENGTH_EXT (src/Graphics/GLU/Tokens.hs:132)
+    GLU_PATH_LENGTH (src/Graphics/GLU/Tokens.hs:133)
+    GLU_PARAMETRIC_ERROR (src/Graphics/GLU/Tokens.hs:134)
+    GLU_DOMAIN_DISTANCE (src/Graphics/GLU/Tokens.hs:135)
+    GLU_MAP1_TRIM_2 (src/Graphics/GLU/Tokens.hs:138)
+    GLU_MAP1_TRIM_3 (src/Graphics/GLU/Tokens.hs:139)
+    GLU_POINT (src/Graphics/GLU/Tokens.hs:142)
+    GLU_LINE (src/Graphics/GLU/Tokens.hs:143)
+    GLU_FILL (src/Graphics/GLU/Tokens.hs:144)
+    GLU_SILHOUETTE (src/Graphics/GLU/Tokens.hs:145)
+    GLU_SMOOTH (src/Graphics/GLU/Tokens.hs:151)
+    GLU_FLAT (src/Graphics/GLU/Tokens.hs:152)
+    GLU_NONE (src/Graphics/GLU/Tokens.hs:153)
+    GLU_OUTSIDE (src/Graphics/GLU/Tokens.hs:156)
+    GLU_INSIDE (src/Graphics/GLU/Tokens.hs:157)
+    GLU_TESS_BEGIN (src/Graphics/GLU/Tokens.hs:160)
+    GLU_BEGIN (src/Graphics/GLU/Tokens.hs:161)
+    GLU_TESS_VERTEX (src/Graphics/GLU/Tokens.hs:162)
+    GLU_VERTEX (src/Graphics/GLU/Tokens.hs:163)
+    GLU_TESS_END (src/Graphics/GLU/Tokens.hs:164)
+    GLU_END (src/Graphics/GLU/Tokens.hs:165)
+    GLU_TESS_ERROR (src/Graphics/GLU/Tokens.hs:166)
+    GLU_TESS_EDGE_FLAG (src/Graphics/GLU/Tokens.hs:167)
+    GLU_EDGE_FLAG (src/Graphics/GLU/Tokens.hs:168)
+    GLU_TESS_COMBINE (src/Graphics/GLU/Tokens.hs:169)
+    GLU_TESS_BEGIN_DATA (src/Graphics/GLU/Tokens.hs:170)
+    GLU_TESS_VERTEX_DATA (src/Graphics/GLU/Tokens.hs:171)
+    GLU_TESS_END_DATA (src/Graphics/GLU/Tokens.hs:172)
+    GLU_TESS_ERROR_DATA (src/Graphics/GLU/Tokens.hs:173)
+    GLU_TESS_EDGE_FLAG_DATA (src/Graphics/GLU/Tokens.hs:174)
+    GLU_TESS_COMBINE_DATA (src/Graphics/GLU/Tokens.hs:175)
+    GLU_CW (src/Graphics/GLU/Tokens.hs:178)
+    GLU_CCW (src/Graphics/GLU/Tokens.hs:179)
+    GLU_INTERIOR (src/Graphics/GLU/Tokens.hs:180)
+    GLU_EXTERIOR (src/Graphics/GLU/Tokens.hs:181)
+    GLU_UNKNOWN (src/Graphics/GLU/Tokens.hs:182)
+    GLU_TESS_WINDING_RULE (src/Graphics/GLU/Tokens.hs:185)
+    GLU_TESS_BOUNDARY_ONLY (src/Graphics/GLU/Tokens.hs:186)
+    GLU_TESS_TOLERANCE (src/Graphics/GLU/Tokens.hs:187)
+    GLU_TESS_ERROR1 (src/Graphics/GLU/Tokens.hs:190)
+    GLU_TESS_ERROR2 (src/Graphics/GLU/Tokens.hs:191)
+    GLU_TESS_ERROR3 (src/Graphics/GLU/Tokens.hs:192)
+    GLU_TESS_ERROR4 (src/Graphics/GLU/Tokens.hs:193)
+    GLU_TESS_ERROR5 (src/Graphics/GLU/Tokens.hs:194)
+    GLU_TESS_ERROR6 (src/Graphics/GLU/Tokens.hs:195)
+    GLU_TESS_ERROR7 (src/Graphics/GLU/Tokens.hs:196)
+    GLU_TESS_ERROR8 (src/Graphics/GLU/Tokens.hs:197)
+    GLU_TESS_MISSING_BEGIN_POLYGON (src/Graphics/GLU/Tokens.hs:198)
+    GLU_TESS_MISSING_BEGIN_CONTOUR (src/Graphics/GLU/Tokens.hs:199)
+    GLU_TESS_MISSING_END_POLYGON (src/Graphics/GLU/Tokens.hs:200)
+    GLU_TESS_MISSING_END_CONTOUR (src/Graphics/GLU/Tokens.hs:201)
+    GLU_TESS_COORD_TOO_LARGE (src/Graphics/GLU/Tokens.hs:202)
+    GLU_TESS_NEED_COMBINE_CALLBACK (src/Graphics/GLU/Tokens.hs:203)
+    GLU_TESS_WINDING_ODD (src/Graphics/GLU/Tokens.hs:206)
+    GLU_TESS_WINDING_NONZERO (src/Graphics/GLU/Tokens.hs:207)
+    GLU_TESS_WINDING_POSITIVE (src/Graphics/GLU/Tokens.hs:208)
+    GLU_TESS_WINDING_NEGATIVE (src/Graphics/GLU/Tokens.hs:209)
+    GLU_TESS_WINDING_ABS_GEQ_TWO (src/Graphics/GLU/Tokens.hs:210)
+   2% (  1 / 60) in 'Graphics.GLU.Functions'
+  Missing documentation for:
+    gluBeginCurve (src/Graphics/GLU/Functions.hs:104)
+    gluBeginPolygon (src/Graphics/GLU/Functions.hs:117)
+    gluBeginSurface (src/Graphics/GLU/Functions.hs:130)
+    gluBeginTrim (src/Graphics/GLU/Functions.hs:143)
+    gluBuild1DMipmapLevels (src/Graphics/GLU/Functions.hs:156)
+    gluBuild1DMipmaps (src/Graphics/GLU/Functions.hs:169)
+    gluBuild2DMipmapLevels (src/Graphics/GLU/Functions.hs:182)
+    gluBuild2DMipmaps (src/Graphics/GLU/Functions.hs:195)
+    gluBuild3DMipmapLevels (src/Graphics/GLU/Functions.hs:208)
+    gluBuild3DMipmaps (src/Graphics/GLU/Functions.hs:221)
+    gluCheckExtension (src/Graphics/GLU/Functions.hs:234)
+    gluCylinder (src/Graphics/GLU/Functions.hs:247)
+    gluDeleteNurbsRenderer (src/Graphics/GLU/Functions.hs:260)
+    gluDeleteQuadric (src/Graphics/GLU/Functions.hs:273)
+    gluDeleteTess (src/Graphics/GLU/Functions.hs:286)
+    gluDisk (src/Graphics/GLU/Functions.hs:299)
+    gluEndCurve (src/Graphics/GLU/Functions.hs:312)
+    gluEndPolygon (src/Graphics/GLU/Functions.hs:325)
+    gluEndSurface (src/Graphics/GLU/Functions.hs:338)
+    gluEndTrim (src/Graphics/GLU/Functions.hs:351)
+    gluErrorString (src/Graphics/GLU/Functions.hs:364)
+    gluGetNurbsProperty (src/Graphics/GLU/Functions.hs:377)
+    gluGetString (src/Graphics/GLU/Functions.hs:390)
+    gluGetTessProperty (src/Graphics/GLU/Functions.hs:403)
+    gluLoadSamplingMatrices (src/Graphics/GLU/Functions.hs:416)
+    gluLookAt (src/Graphics/GLU/Functions.hs:429)
+    gluNewNurbsRenderer (src/Graphics/GLU/Functions.hs:442)
+    gluNewQuadric (src/Graphics/GLU/Functions.hs:455)
+    gluNewTess (src/Graphics/GLU/Functions.hs:468)
+    gluNextContour (src/Graphics/GLU/Functions.hs:481)
+    gluNurbsCallback (src/Graphics/GLU/Functions.hs:494)
+    gluNurbsCallbackData (src/Graphics/GLU/Functions.hs:507)
+    gluNurbsCallbackDataEXT (src/Graphics/GLU/Functions.hs:520)
+    gluNurbsCurve (src/Graphics/GLU/Functions.hs:533)
+    gluNurbsProperty (src/Graphics/GLU/Functions.hs:546)
+    gluNurbsSurface (src/Graphics/GLU/Functions.hs:559)
+    gluOrtho2D (src/Graphics/GLU/Functions.hs:572)
+    gluPartialDisk (src/Graphics/GLU/Functions.hs:585)
+    gluPerspective (src/Graphics/GLU/Functions.hs:598)
+    gluPickMatrix (src/Graphics/GLU/Functions.hs:611)
+    gluProject (src/Graphics/GLU/Functions.hs:624)
+    gluPwlCurve (src/Graphics/GLU/Functions.hs:637)
+    gluQuadricCallback (src/Graphics/GLU/Functions.hs:650)
+    gluQuadricDrawStyle (src/Graphics/GLU/Functions.hs:663)
+    gluQuadricNormals (src/Graphics/GLU/Functions.hs:676)
+    gluQuadricOrientation (src/Graphics/GLU/Functions.hs:689)
+    gluQuadricTexture (src/Graphics/GLU/Functions.hs:702)
+    gluScaleImage (src/Graphics/GLU/Functions.hs:715)
+    gluSphere (src/Graphics/GLU/Functions.hs:728)
+    gluTessBeginContour (src/Graphics/GLU/Functions.hs:741)
+    gluTessBeginPolygon (src/Graphics/GLU/Functions.hs:754)
+    gluTessCallback (src/Graphics/GLU/Functions.hs:767)
+    gluTessEndContour (src/Graphics/GLU/Functions.hs:780)
+    gluTessEndPolygon (src/Graphics/GLU/Functions.hs:793)
+    gluTessNormal (src/Graphics/GLU/Functions.hs:806)
+    gluTessProperty (src/Graphics/GLU/Functions.hs:819)
+    gluTessVertex (src/Graphics/GLU/Functions.hs:832)
+    gluUnProject (src/Graphics/GLU/Functions.hs:845)
+    gluUnProject4 (src/Graphics/GLU/Functions.hs:858)
+  13% (  8 / 60) in 'Graphics.GLU.Callbacks'
+  Missing documentation for:
+    TessBeginCallback (src/Graphics/GLU/Callbacks.hs:57)
+    makeTessBeginCallback (src/Graphics/GLU/Callbacks.hs:59)
+    TessEdgeFlagCallback (src/Graphics/GLU/Callbacks.hs:62)
+    makeTessEdgeFlagCallback (src/Graphics/GLU/Callbacks.hs:64)
+    TessVertexCallback (src/Graphics/GLU/Callbacks.hs:67)
+    makeTessVertexCallback (src/Graphics/GLU/Callbacks.hs:69)
+    TessEndCallback (src/Graphics/GLU/Callbacks.hs:72)
+    makeTessEndCallback (src/Graphics/GLU/Callbacks.hs:74)
+    TessErrorCallback (src/Graphics/GLU/Callbacks.hs:77)
+    makeTessErrorCallback (src/Graphics/GLU/Callbacks.hs:79)
+    TessCombineCallback (src/Graphics/GLU/Callbacks.hs:82)
+    makeTessCombineCallback (src/Graphics/GLU/Callbacks.hs:84)
+    TessBeginDataCallback (src/Graphics/GLU/Callbacks.hs:87)
+    makeTessBeginDataCallback (src/Graphics/GLU/Callbacks.hs:89)
+    TessEdgeFlagDataCallback (src/Graphics/GLU/Callbacks.hs:92)
+    makeTessEdgeFlagDataCallback (src/Graphics/GLU/Callbacks.hs:94)
+    TessVertexDataCallback (src/Graphics/GLU/Callbacks.hs:97)
+    makeTessVertexDataCallback (src/Graphics/GLU/Callbacks.hs:99)
+    TessEndDataCallback (src/Graphics/GLU/Callbacks.hs:102)
+    makeTessEndDataCallback (src/Graphics/GLU/Callbacks.hs:104)
+    TessErrorDataCallback (src/Graphics/GLU/Callbacks.hs:107)
+    makeTessErrorDataCallback (src/Graphics/GLU/Callbacks.hs:109)
+    TessCombineDataCallback (src/Graphics/GLU/Callbacks.hs:112)
+    makeTessCombineDataCallback (src/Graphics/GLU/Callbacks.hs:114)
+    QuadricCallback (src/Graphics/GLU/Callbacks.hs:119)
+    makeQuadricCallback (src/Graphics/GLU/Callbacks.hs:121)
+    NURBSBeginCallback (src/Graphics/GLU/Callbacks.hs:126)
+    makeNURBSBeginCallback (src/Graphics/GLU/Callbacks.hs:128)
+    NURBSVertexCallback (src/Graphics/GLU/Callbacks.hs:131)
+    makeNURBSVertexCallback (src/Graphics/GLU/Callbacks.hs:133)
+    NURBSNormalCallback (src/Graphics/GLU/Callbacks.hs:136)
+    makeNURBSNormalCallback (src/Graphics/GLU/Callbacks.hs:138)
+    NURBSColorCallback (src/Graphics/GLU/Callbacks.hs:141)
+    makeNURBSColorCallback (src/Graphics/GLU/Callbacks.hs:143)
+    NURBSTexCoordCallback (src/Graphics/GLU/Callbacks.hs:146)
+    makeNURBSTexCoordCallback (src/Graphics/GLU/Callbacks.hs:148)
+    NURBSEndCallback (src/Graphics/GLU/Callbacks.hs:151)
+    makeNURBSEndCallback (src/Graphics/GLU/Callbacks.hs:153)
+    NURBSErrorCallback (src/Graphics/GLU/Callbacks.hs:156)
+    makeNURBSErrorCallback (src/Graphics/GLU/Callbacks.hs:158)
+    NURBSBeginDataCallback (src/Graphics/GLU/Callbacks.hs:161)
+    makeNURBSBeginDataCallback (src/Graphics/GLU/Callbacks.hs:163)
+    NURBSVertexDataCallback (src/Graphics/GLU/Callbacks.hs:166)
+    makeNURBSVertexDataCallback (src/Graphics/GLU/Callbacks.hs:168)
+    NURBSNormalDataCallback (src/Graphics/GLU/Callbacks.hs:171)
+    makeNURBSNormalDataCallback (src/Graphics/GLU/Callbacks.hs:173)
+    NURBSColorDataCallback (src/Graphics/GLU/Callbacks.hs:176)
+    makeNURBSColorDataCallback (src/Graphics/GLU/Callbacks.hs:178)
+    NURBSTexCoordDataCallback (src/Graphics/GLU/Callbacks.hs:181)
+    makeNURBSTexCoordDataCallback (src/Graphics/GLU/Callbacks.hs:183)
+    NURBSEndDataCallback (src/Graphics/GLU/Callbacks.hs:186)
+    makeNURBSEndDataCallback (src/Graphics/GLU/Callbacks.hs:188)
+ 100% (  5 /  5) in 'Graphics.GLU'
+Documentation created: dist/dist-sandbox-4c142bec/doc/html/GLURaw/index.html
+Creating package registration file:
+/var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/pkgConf-GLURaw-2.0.05305119672110010672.4
+Installing library in
+/Users/Erik/Desktop/gloss/.cabal-sandbox/lib/x86_64-osx-ghc-8.0.2/GLURaw-2.0.0.4-BkVUBNmSTQfAFO3pe4IC02
+Registering GLURaw-2.0.0.4...
+cabal: Leaving directory '/var/folders/d1/1c20kwb529vgk2qx2lqp2w780000gp/T/cabal-tmp-17262/GLURaw-2.0.0.4'
