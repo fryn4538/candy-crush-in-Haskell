@@ -6,14 +6,24 @@ Fixade git.
 ----------
 Jag undersökte hur man skapar en GameLoop i Haskell genom att följa olika guider online.
 Valde att studera en gameLoop till ett pong spel och implementera de delar som passade vårt spel.
+
+Skapade funktionen main
+
 5h --18/02
 
 ----------
 Skapade en markör som går att flytta för att välja godis att flytta på.
+Skapade funktionen handleKeys för piltangenter och enter.
+Skapade funktionerna
+moveSquare
+UpdateLocationX
+UpdateLocationY
+mkMarker
 2h --18/02
 
 ----------
-Städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet.
+Jag städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet.
+
 2h --18/02
 
 ----------
@@ -25,18 +35,23 @@ Jag har skapat en enklare kodstruktur där man kan ändra spelstorleken från 5x
 1.5h --20/02
 
 ----------
-Skapat ett system för slumpgenerering av godisfärger med hjälp av system.random. Detta är endast en form av placeholder för att förstå hur godisarna ritas ut.
+Jag skapade ett system för slumpgenerering av godisfärger med hjälp av system.random. 
+Skapade funktionerna
+randListgen
+randColorGen
+getColor
+
 6h -- 20/02
 
 ----------
-Vi har stött på ett problem där våra datatyper inte är optimala för att få koden att fungera och har arbetat mycket på att ordna detta. Vi har nu skapat en datatyp Candy som innehåller (((X-Kordinat, Y-Kordinat), Godisnummer), Färg)
+Jag har stött på ett problem där våra datatyper inte är optimala för att få koden att fungera och har arbetat mycket på att ordna detta. Vi har nu skapat en datatyp Candy som innehåller (((X-Kordinat, Y-Kordinat), Godisnummer), Färg)
 2h -- 21/02
 
 ----------
-Jag bestämde att vi behöver en variabel Int för att hålla koll på vilken markör som godisen håller över så vi har skapat z som alltid håller koll på detta.
+Jag bestämde att vi behöver en variabel Int för att hålla koll på vilken markör som godisen håller över så Jag har skapat attributet squareIndex som alltid håller koll på detta.
+
+
 2h -- 21/02
-
-
 ----------
 Jag har skapat en funktion för att markera den godisen som ska flyttas på med en annan färgad rektangel. 
 30 min --21/02
@@ -44,20 +59,29 @@ Jag har skapat en funktion för att markera den godisen som ska flyttas på med 
 
 ----------
 Jag har sett till att ifall man markerar en godis och klickar på piltangenterna för att byta plats på denna så får man en return True eller False ifall bytet är tillåtet. Alltså så länge det finns en godis bredvid att byta med och man inte försöker byta med en godis neråt när man är längst ner på spelplanen. Jag har även skapat en funktion för att byta plats på två godisar genom att markera dem med [Enter] och sedan trycka på piltangenterna.
+
+Skapade funktionerna
+moveCandy
+moveCandyAux
+verifySwapCandy
+verifyMoveCandy
 4h -- 22/02
 
 ----------
 Jag har skapat en funktion som körs vid början av spelet som kollar ifall det finns några rader med 3 eller fler av samma godisar i rad och isåfall gör dessa svarta. Detta kollas genom att rekursivt se om färgen på godis n är samma som på godis n+1. 
+checkRows
 4h -- 23/02
 
 ----------
-Jag skapade en funktion för att byta mellan olika gamestates. Gamestate byts med tangenterna 1 & 2 och är i nuläget endast en svart skärm och spelet.
+Jag skapade en funktion för att byta mellan olika gamestates i handleKeys. Gamestate byts med tangenterna 1 & 2 och är i nuläget endast en svart skärm och spelet.
+
+--OBS denna funktion används inte i det slutgiltiga spelet men lämnades för eventuell utveckling i framtiden
 1h -- 23/02
 
 ----------
 Skapade funktionerna:
+checkRows --Skrev om denna funktionen
 checkHorizontalRows
-checkRows
 checkVerticalRows
 makeBlackV
 makeBlackH
@@ -84,4 +108,27 @@ checkVerticalRows
 moveCandy
 moveCandyAux
 5h -- 26/02
+
+
+Skrev testCases 8-26
+Skrev kommentarer för
+refill
+refillAux
+recolour
+moveBlack
+moveBlackAux
+Ändrat variabelnamn och gått igenom kommentarer för olika funktioner och kollat så allt ser rätt ut.
+4h -- 27/02
+
+
+
+Jag har skrivit följande rubriker till rapporten
+
+How to Play
+handleKeys
+checkRows and makeBlack
+moveBlack
+Introduction and purpose
+
+5h -- 27->28/02
  
