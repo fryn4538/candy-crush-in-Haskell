@@ -46,7 +46,7 @@ data Player = Player
    EXAMPLES: boxes -> 9
 -}
 boxes :: Float
-boxes = 7
+boxes = 5
 
 {- boxesInt
    Converts boxes into an Int.
