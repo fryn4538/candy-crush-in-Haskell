@@ -31,7 +31,8 @@ data Player = Player
      moveState :: Bool,
      gameState :: Int,
      colorBank :: [Color],
-     score :: Int
+     score :: Int,
+     time :: Float
   } deriving Show
 --delay :: c -> IO a -> IO a
 --delay _ _ = threadDelay 10000 >> 10000
@@ -69,7 +70,7 @@ main = play
        initState
        render
        handleKeys
-       (const id) -- Löst så att rutan inte flyttas med (const id)
+       timer --(const id) -- Löst så att rutan inte flyttas med (const id)
 ------------------------ Playfunktionens argument ----------------------------------------------
 {- window
    Tells the main function to run in fullscreen.
@@ -93,7 +94,7 @@ background = black
    EXAMPLES: fps -> 60
 -}
 fps :: Int
-fps = 60
+fps = 1
 
 --  Initialize the game with this game state.
 {- initState
@@ -110,8 +111,8 @@ initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
                      candyBank =  refill (checkRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))),        
                      moveState = False,
                      gameState = 2,
-                     score = 0
-                     }
+                     score = 0,
+                     time = 20}
 
 {- render player
    Generates the grphics of the game.
@@ -121,7 +122,8 @@ initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
 render :: Player -> Picture
 render player
    | (gameState player) == 1 = pictures []
-   | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)])
+   | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)] ++ [Color green $ translate 500 0 $ showTime player])
+   | (gameState player) == 3 = pictures [(Color green $ translate (-600) 0 $ text ("Your score was: " ++ show (score player)))]
 
 
 
@@ -139,6 +141,7 @@ render player
 handleKeys :: Event -> Player -> Player
 handleKeys (EventKey (Char '2') Down _ _) player = player {gameState = 2}
 handleKeys (EventKey (Char '1') Down _ _) player = player {gameState = 1}
+handleKeys (EventKey (Char '3') Down _ _) player = player {gameState = 3}
 
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
   | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Up" (candyBank player)) (colorBank player), score = (updateScore player)}
@@ -601,16 +604,15 @@ scoreDisp player = text (show (score player))
 updateScore :: Player -> Int
 updateScore player = (score player) + 1
 
+timer :: Float -> Player -> Player
+timer num player
+  | (time player) <= 0 = player {gameState = 3}
+  | otherwise = player {time = ((time player)-1)}
 
 
-
-
-
-
-
-
-
-
+showTime :: Player -> Picture
+showTime player = text (show (time player))
+  
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
 rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test27, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test38, test39, test40, test41]
