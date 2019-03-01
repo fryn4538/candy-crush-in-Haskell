@@ -14,3 +14,6 @@
 2019-02-26 | 10:00 - 15:10 | We had one last problem which was that de black candies at the top of the gamebord didn't get a new color so that they would be part of the game again. I solved that by creating the functions refill and refillAux so that when a black candy is at the top of the gamebord it gets recolored to a random color. After that I crated the functions scoreDisp and updateScore so that the game keeps track of how many correct moves the player has done. When that was done I started to comment the code, I commented the updateScore and scoreDisp functions.
 
 2019-02-27 to 2019-02-28 | 15:00 to 06:25 | Kept on commenting functions. Commented boxes, boxesInt, window, background, fps, initState, render, refill, refillAux, moveBlack and moveBlackAux, updateLocationX, updateLocationY. After that I created testcases 1 thru 10 and 22-24. Then it was time to start writing on the documentation for the project. I structured the document and wrote about the external libraries, and functions refill, moveSquare and I wrote the section about known shortcomings of the program. But now the time is 06:24 and I have been up too long. I'll keep working on that tomorrow(or later today).
+
+2019-02-28 | 15:00 - 18:00 | skapade funktion för att räkna tiden
+2019-03-01 | 12:00 - 17:00 | Designade menyn skrev kommentarer samt gjorde meny moves

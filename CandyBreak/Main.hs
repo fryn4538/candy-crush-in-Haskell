@@ -25,8 +25,6 @@ type Candy = (((Float,Float),Int),Color)
 -}
 data Player = Player
   {  squareLoc :: (Float, Float),
-     menuLoc :: Float,
-     gridSize :: Float,
      playerColor :: Color,
      squareIndex :: Float,
      candyBank :: [Candy],
@@ -52,7 +50,7 @@ data Player = Player
    EXAMPLES: boxes -> 9
 -}
 boxes :: Float
-boxes = 9
+boxes = 8
 
 {- boxesInt
    Converts boxes into an Int.
@@ -110,14 +108,12 @@ fps = 1
 -}
 initState :: Player
 initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
-                     menuLoc = (-400),
-                     gridSize = 6,
                      squareIndex = 1,
                      playerColor = white,
                      colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
                      candyBank =  refill (checkRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))),        
                      moveState = False,
-                     gameState = 2,
+                     gameState = 1,
                      score = 0,
                      time = 120}
 
@@ -128,9 +124,9 @@ initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
 --  Draw a candy game state (convert it to a picture).
 render :: Player -> Picture
 render player
-   | (gameState player) == 1 = pictures ([(Color green $ translate (-400) 200 $ text ("Candy Break"))] ++ (startBox 5 (-400) (-200)) ++ (startTxt 5 (-454) (-226)) ++ [menuMarker player])
+   | (gameState player) == 1 = pictures ([(Color green $ translate (-380) 0 $ text ("Candy Break"))] ++ [(Color green $ translate (-260) (-200) $ scale 0.4 0.4 $ text ("Press ENTER to play"))])
    | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)] ++ [Color green $ translate 500 0 $ showTime player])
-   | (gameState player) == 3 = pictures [(Color green $ translate (-600) 0 $ text ("Your score was: " ++ show (score player)))]
+   | (gameState player) == 3 = pictures ([(Color green $ translate (-580) 0 $ text ("Your score was: " ++ show (score player)))] ++ [(Color green $ translate (-340) (-200) $ scale 0.4 0.4 $ text ("Press ENTER to play again"))] ++ [(Color green $ translate (-240) (-300) $ scale 0.4 0.4 $ text ("Press ESC to exit"))])
 
 
 
@@ -161,17 +157,24 @@ handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player
   | otherwise = moveSquare 0 (-100) player
 
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player
-  | (gameState player) == 1 = moveMenu (-200) player
+  | (gameState player) == 1 = player
   | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Left" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Left" (candyBank player)) 0))}
   | otherwise = moveSquare (-100) 0 player
 
 handleKeys (EventKey (SpecialKey KeyRight) Down _ _) player
-  | (gameState player) == 1 = moveMenu (200) player
+  | (gameState player) == 1 = player
   | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Right" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Right" (candyBank player)) 0))}
   | otherwise = moveSquare 100 0 player
   
 handleKeys (EventKey (SpecialKey KeyEnter) Down _ _) player
-  | (gameState player) == 1 = initState {time = 100}
+  | (gameState player) == 1 || (gameState player) == 3 = player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
+                                         squareIndex = 1,
+                                         playerColor = white,
+                                          colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
+                                          moveState = False,
+                                          gameState = 2,
+                                          score = 0,
+                                          time = 120}
   | moveState player = player { playerColor = white, moveState = False}
   | otherwise = player {playerColor = violet, moveState = True}
   
@@ -626,16 +629,6 @@ timer num player
 showTime :: Player -> Picture
 showTime player = text (show (time player))
 
-startBox :: Int -> Float -> Float -> [Picture]
-startBox 0 _ _ = []
-startBox n x y =  [Color green $ translate x y $ rectangleSolid 150 100] ++  startBox (n-1) (x+200) (y)
-
-startTxt :: Int -> Float -> Float -> [Picture]
-startTxt 9 x y = [Color black $ translate x y $ scale 0.5 0.5 $ text ("9x9")]
-startTxt n x y = [Color black $ translate x y $ scale 0.5 0.5 $ text ((show n) ++ "x" ++ (show n))] ++ startTxt (n+1) (x+200) y
-
-menuMarker :: Player -> Picture
-menuMarker player = (Color white $ translate (menuLoc player) (-200) $ lineLoop $ rectanglePath 150 100)
 
 countBlack :: [Candy] -> Int -> Int
 countBlack [] n = n
@@ -643,26 +636,7 @@ countBlack (x:xs) n
   | snd x == black = countBlack xs (n+1)
   | otherwise = countBlack xs n
 
-moveMenu :: Float
-            -> Player -- The previous game state
-            -> Player -- A new game state with an updated square position
-moveMenu moveX player = player {menuLoc = x', gridSize = grid'}
-  where
-    -- Old locations and velocities.
-    grid = gridSize player
-    x = menuLoc player
-    -- New locations. -- Nu kan man inte gå ut ur fönstret.
-    x' | x >= 400 && moveX >= 0 = x
-       | x >= 400 && moveX < 0 = x - 200
-       | x <= (-400) && moveX <= 0 = x
-       | x <= (-400) && moveX > 0 = x + 200
-       | otherwise = x + (moveX)
 
-    grid'| grid >= 9 && moveX >= 0 = grid
-         | x >= 9 && moveX < 0 = grid - 1
-         | x <= 5 && moveX <= 0 = grid
-         | x <= 5 && moveX > 0 = grid + 1
-         | otherwise = grid - ((moveX)/(-1*moveX))
 -----------------------------------------------------------------------------------------------------------------------
 
 rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test27, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test38, test39, test40, test41]
