@@ -36,8 +36,6 @@ data Player = Player
      score :: Int,
      time :: Float
   } deriving Show
---delay :: c -> IO a -> IO a
---delay _ _ = threadDelay 10000 >> 10000
 
 -- In order to get random candies we chose a random element from a list.
 -- Saved values --
@@ -52,7 +50,7 @@ data Player = Player
    EXAMPLES: boxes -> 9
 -}
 boxes :: Float
-boxes = gridSize initState
+boxes = 9
 
 {- boxesInt
    Converts boxes into an Int.
@@ -65,7 +63,7 @@ boxesInt = round boxes
 
 {- main
    A gameloop that updates the game after every move.
-   ???
+   RETURNS: unit
 -}
 main :: IO ()
 main = play
@@ -119,7 +117,7 @@ initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
                      moveState = False,
                      gameState = 2,
                      score = 0,
-                     time = 20}
+                     time = 120}
 
 {- render player
    Generates the grphics of the game.
@@ -157,7 +155,7 @@ handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
 
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player
   | (gameState player) == 1 = player
-  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, score = ((score player) + countBlack ((moveCandy (squareIndex player) "Down" (candyBank player))) 0), colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player)}
   | otherwise = moveSquare 0 (-100) player
 
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player
@@ -637,6 +635,12 @@ startTxt n x y = [Color black $ translate x y $ scale 0.5 0.5 $ text ((show n) +
 menuMarker :: Player -> Picture
 menuMarker player = (Color white $ translate (menuLoc player) (-200) $ lineLoop $ rectanglePath 150 100)
 
+countBlack :: [Candy] -> Int -> Int
+countBlack [] n = n
+countBlack (x:xs) n
+  | snd x == black = countBlack xs (n+1)
+  | otherwise = countBlack xs n
+
 moveMenu :: Float
             -> Player -- The previous game state
             -> Player -- A new game state with an updated square position
@@ -665,7 +669,7 @@ test1 = TestCase $ assertEqual "boxes" 5 (boxes)
 test2 = TestCase $ assertEqual "boxesInt" 5 (boxesInt)
 test3 = TestCase $ assertEqual "window" FullScreen (window)
 test4 = TestCase $ assertEqual "background" black (background)
-test5 = TestCase $ assertEqual "fps" 60 (fps)
+test5 = TestCase $ assertEqual "fps" 1 (fps)
 
 test6 = TestCase $ assertEqual "paintCandy1" ([Color black (Translate 100.0 100.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)]))]) (paintCandy [(((100,100),1),black)])
 test7 = TestCase $ assertEqual "paintCandy2" ([Color (black) (Translate 100.0 100.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)])),Color (red) (Translate 100.0 0.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)]))]) (paintCandy [(((100,100),1),black),(((100,0),2),red)])
@@ -756,4 +760,9 @@ testList10 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),black),(((0.0,200.0
               (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+testtest :: [Candy]
+testtest = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),
+            (((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),blue),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),
+            (((-200.0,0.0),11),green),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),
+            (((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),red),(((200.0,-100.0),20),white),
+            (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
