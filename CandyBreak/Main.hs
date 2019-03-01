@@ -152,22 +152,22 @@ handleKeys (EventKey (Char '3') Down _ _) player = player {gameState = 3}
 
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
   | (gameState player) == 1 = player
-  | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Up" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Up" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Up" (candyBank player)) 0))}
   | otherwise = moveSquare 0 100 player
 
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player
   | (gameState player) == 1 = player
-  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Down" (candyBank player)) 0))}
   | otherwise = moveSquare 0 (-100) player
 
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player
   | (gameState player) == 1 = moveMenu (-200) player
-  | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Left" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Left" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Left" (candyBank player)) 0))}
   | otherwise = moveSquare (-100) 0 player
 
 handleKeys (EventKey (SpecialKey KeyRight) Down _ _) player
   | (gameState player) == 1 = moveMenu (200) player
-  | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Right" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Right" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Right" (candyBank player)) 0))}
   | otherwise = moveSquare 100 0 player
   
 handleKeys (EventKey (SpecialKey KeyEnter) Down _ _) player
@@ -636,6 +636,12 @@ startTxt n x y = [Color black $ translate x y $ scale 0.5 0.5 $ text ((show n) +
 
 menuMarker :: Player -> Picture
 menuMarker player = (Color white $ translate (menuLoc player) (-200) $ lineLoop $ rectanglePath 150 100)
+
+countBlack :: [Candy] -> Int -> Int
+countBlack [] n = n
+countBlack (x:xs) n
+  | snd x == black = countBlack xs (n+1)
+  | otherwise = countBlack xs n
 
 moveMenu :: Float
             -> Player -- The previous game state

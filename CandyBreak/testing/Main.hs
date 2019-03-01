@@ -1,9 +1,9 @@
-
+module Main(main) where
 import System.IO.Unsafe  -- be careful! 
 import Debug.Trace
 import Graphics.Gloss
 --import Graphics.Gloss.Data.Color (makeColor, red)
---import Graphics.Gloss.Data.ViewPort
+import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
 --import Graphics.Gloss.Data.ViewPort
 --import Control.Exception
@@ -36,8 +36,6 @@ data Player = Player
      score :: Int,
      time :: Float
   } deriving Show
---delay :: c -> IO a -> IO a
---delay _ _ = threadDelay 10000 >> 10000
 
 -- In order to get random candies we chose a random element from a list.
 -- Saved values --
@@ -65,17 +63,12 @@ boxesInt = round boxes
 
 {- main
    A gameloop that updates the game after every move.
-   ???
+   RETURNS: unit
 -}
 main :: IO ()
-main = play
-       window
-       background
-       fps
-       initState
-       render
-       handleKeys
-       timer --(const id) -- Löst så att rutan inte flyttas med (const id)
+main = if (gameState initState) == 1
+          then play window background fps initStateMenu renderMenu handleKeys (const id)  -- Löst så att rutan inte flyttas med (const id)
+          else play window background fps initStateMenu render handleKeys timer
 ------------------------ Playfunktionens argument ----------------------------------------------
 {- window
    Tells the main function to run in fullscreen.
@@ -157,7 +150,7 @@ handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
 
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player
   | (gameState player) == 1 = player
-  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, score = ((score player) + countBlack ((moveCandy (squareIndex player) "Down" (candyBank player))) 0), colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player)}
+  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = ((score player) + countBlack ((moveCandy (squareIndex player) "Down" (candyBank player))) 0)}
   | otherwise = moveSquare 0 (-100) player
 
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player
