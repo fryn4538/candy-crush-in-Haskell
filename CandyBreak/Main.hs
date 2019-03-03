@@ -32,7 +32,7 @@ data Player = Player
      gameState :: Int,
      colorBank :: [Color],
      score :: Int,
-     time :: Float
+     time :: Int
   } deriving Show
 --delay :: c -> IO a -> IO a
 --delay _ _ = threadDelay 10000 >> 10000
@@ -107,15 +107,15 @@ fps = 1
    Examples initState -> Player {squareLoc = (-400.0,400.0), playerColor = RGBA 1.0 1.0 1.0 1.0, squareIndex = 1.0, candyBank = [(((100.0,100.0),1),RGBA 0.0 1.0 0.0 1.0)..(((100.0,100.0),81),RGBA 0.0 1.0 0.0 1.0)], moveState = False, gameState = 2, colorBank = [RGBA 1.0 0.0 0.0 1.0..RGBA 1.0 0.0 1.0 1.0], score = 0}
 -}
 initState :: Player
-initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
+initState =  Player {squareLoc   = (((-((boxes*50)-50)),((boxes*50)-50))),
                      squareIndex = 1,
                      playerColor = white,
-                     colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
-                     candyBank =  refill (checkRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))),        
-                     moveState = False,
-                     gameState = 1,
-                     score = 0,
-                     time = 120}
+                     colorBank   = (randColorGen (unsafePerformIO (randListGen (10000)))),
+                     candyBank   = refill (checkRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))),        
+                     moveState   = False,
+                     gameState   = 1,
+                     score       = 0,
+                     time        = 120}
 
 {- render player
    Generates the grphics of the game.
@@ -127,6 +127,7 @@ render player
    | (gameState player) == 1 = pictures ([(Color green $ translate (-380) 0 $ text ("Candy Break"))] ++ [(Color green $ translate (-260) (-200) $ scale 0.4 0.4 $ text ("Press ENTER to play"))])
    | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)] ++ [Color green $ translate 500 0 $ showTime player])
    | (gameState player) == 3 = pictures ([(Color green $ translate (-580) 0 $ text ("Your score was: " ++ show (score player)))] ++ [(Color green $ translate (-340) (-200) $ scale 0.4 0.4 $ text ("Press ENTER to play again"))] ++ [(Color green $ translate (-240) (-300) $ scale 0.4 0.4 $ text ("Press ESC to exit"))])
+   | (gameState player) == 4 = pictures (paintCandy $ testList1)
 
 
 
@@ -145,6 +146,7 @@ handleKeys :: Event -> Player -> Player
 handleKeys (EventKey (Char '1') Down _ _) player = player {gameState = 1}
 handleKeys (EventKey (Char '2') Down _ _) player = player {gameState = 2}
 handleKeys (EventKey (Char '3') Down _ _) player = player {gameState = 3}
+handleKeys (EventKey (Char '4') Down _ _) player = player {gameState = 4}
 
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
   | (gameState player) == 1 = player
@@ -362,8 +364,8 @@ moveBlackAux :: [Candy] -> Int -> Int -> [Candy]
 moveBlackAux list n m
   | n <= 0 =  list
   | m > ((boxesInt * boxesInt)) = moveBlackAux list (n-1) (boxesInt + 1)
-  | (snd (list !! (m-1))) == black =  moveBlackAux (moveCandy (fromIntegral m) "Up" list) n (m+1)
-  | otherwise = moveBlackAux list n (m+1)
+  | (snd (list !! (m-1))) == black = trace ("m" ++ show m ++ " n" ++ show n) $ moveBlackAux (moveCandy (fromIntegral m) "Up" list) n (m+1)
+  | otherwise = trace ("m" ++ show m ++ " n" ++ show n) $  moveBlackAux list n (m+1)
 {- makeBlackV rows counter list
     Makes specified vertical row black. 
     RETURNS: A new candylist with the row blacked out.
@@ -503,7 +505,7 @@ paintCandy ((((a,b),int),col):xs) = [Color col $ translate a b $ rectangleSolid 
 -}
 candyLocations :: Float -> (Float, Float)-> [(Float,Float)]
 candyLocations 0  (a,b)
-  | a > 200 && b < (-((boxes*100)-400)) = []
+  | a > 350 && b < (-((boxes*100)-400)) = []
   | otherwise = candyLocations boxes ((-200), b-100)
 candyLocations num (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ candyLocations (num-1) (a+100,b)
 
@@ -551,7 +553,7 @@ randColorGen list = [getColor (head list)] ++ randColorGen (tail list)
 getColor :: Int -> Color
 getColor n | n == 1 = red
            | n == 2 = white
-           | n == 3 = blue
+           | n == 3 = (greyN 0.2)
            | n == 4 = dark (dark violet)
            | n == 5 = rose
            | n == 6 = dark green
@@ -619,17 +621,37 @@ scoreDisp player = text (show (score player))
 updateScore :: Player -> Int
 updateScore player = (score player) + 1
 
+{- timer num player
+   A countdown timer when the player is in the game. When the countdown hits 0 the game is over.
+   Pre: True
+   RETURNS: an updated player with the time-attribute equal to 1 less than before the function was called.
+   VARIANT: num
+   EXAMPLES: timer 1 (Player {squareLoc = (100,100), squareIndex = 1, playerColor = white, colorBank = [],candyBank = [], moveState = False, gameState = 2, score = 0, time = 120})
+             ->
+             Player {squareLoc = (100.0,100.0), playerColor = RGBA 1.0 1.0 1.0 1.0, squareIndex = 1.0, candyBank = [], moveState = False, gameState = 2, colorBank = [], score = 0, time = 119}
+-}
 timer :: Float -> Player -> Player
 timer num player
   | (gameState player == 1) || (gameState player == 3) = player
   | (time player) <= 0 = player {gameState = 3}
   | otherwise = player {time = ((time player)-1)}
 
-
+{- showTime player
+   Converts time attribute in Player to a Picture.
+   PRE: True
+   RETURNS: the time attribute in player as a Picture.
+   EXAMPLES: showTime (Player {squareLoc   = (100,100), squareIndex = 1, playerColor = white, colorBank = [],candyBank = [], moveState = False, gameState = 1, score = 0, time = 120}) -> Text "120"
+-}
 showTime :: Player -> Picture
 showTime player = text (show (time player))
 
-
+{- countBlack list n
+   Counts the amount of black candies in a list of candies.
+   PRE: countBlack is called with n = 0.
+   RETURNS: n when when every element in list has been checkes.
+   VARIANT: list
+   EXAMPLES: countBlack [[(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),black),(((-50.0,250.0),12),black),(((50.0,250.0),13),black),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow)] 0 -> 3 
+-}
 countBlack :: [Candy] -> Int -> Int
 countBlack [] n = n
 countBlack (x:xs) n
@@ -639,62 +661,64 @@ countBlack (x:xs) n
 
 -----------------------------------------------------------------------------------------------------------------------
 
-rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test27, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test38, test39, test40, test41]
+rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test40, test41, test42]
 
-test1 = TestCase $ assertEqual "boxes" 5 (boxes)
-test2 = TestCase $ assertEqual "boxesInt" 5 (boxesInt)
+test1 = TestCase $ assertEqual "boxes" 8 (boxes)
+test2 = TestCase $ assertEqual "boxesInt" 8 (boxesInt)
 test3 = TestCase $ assertEqual "window" FullScreen (window)
 test4 = TestCase $ assertEqual "background" black (background)
-test5 = TestCase $ assertEqual "fps" 60 (fps)
-
+test5 = TestCase $ assertEqual "fps" 1 (fps)
 test6 = TestCase $ assertEqual "paintCandy1" ([Color black (Translate 100.0 100.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)]))]) (paintCandy [(((100,100),1),black)])
 test7 = TestCase $ assertEqual "paintCandy2" ([Color (black) (Translate 100.0 100.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)])),Color (red) (Translate 100.0 0.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)]))]) (paintCandy [(((100,100),1),black),(((100,0),2),red)])
-
-test8 =  TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationX testList1 5)
-test9 =  TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationX testList1 0)
-test10 = TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationY testList1 ((length testList1)-1))
+test8 =  TestCase $ assertEqual "updateLocationX" (150.0) (updateLocationX testList1 5)
+test9 =  TestCase $ assertEqual "updateLocationX" (-350.0) (updateLocationX testList1 0)
+test10 = TestCase $ assertEqual "updateLocationX" (350.0) (updateLocationX testList1 ((length testList1)-1))
 test11 = TestCase $ assertEqual "VerifyDownMove" False (verifyMoveCandy 0 (-100) (boxes*boxes))
 test12 = TestCase $ assertEqual "VerifyRightMove" True (verifyMoveCandy 100 0 (3))
-test13 = TestCase $ assertEqual "VerifySwapCandy" False (verifySwapCandy 1 testList1 "Right" )
-test14 = TestCase $ assertEqual "VerifySwapCandy" True (verifySwapCandy 2 testList1 "Right" )
-test15 = TestCase $ assertEqual "checkRows" testList1 (checkRows testList 1 )
+test13 = TestCase $ assertEqual "VerifySwapCandy" True (verifySwapCandy 3 testList1 "Right" )
+test14 = TestCase $ assertEqual "VerifySwapCandy" False (verifySwapCandy 11 testList1 "Left" )
+test15 = TestCase $ assertEqual "checkRows" testList1 (checkRows testList1 1 )
 test16 = TestCase $ assertEqual "checkRows" testList5 (checkRows testList2 1 )
 test17 = TestCase $ assertEqual "checkHorizontalRows" testList3 (checkHorizontalRows 1 1 0 [] testList6 testList6 )
 test18 = TestCase $ assertEqual "checkVerticalRows" testList4 (checkVerticalRows 1 1 0 1 [] testList2 )
-test19 = TestCase $ assertEqual "refill"  testList8 (refill testList3 [green, red, white, white, red])
-test20 = TestCase $ assertEqual "refillAux"  testList8 (refillAux testList3 [] [green, red, white, white, red])
-test21 = TestCase $ assertEqual "recolor"  testList8 (recolor testList3 [green, red, white, white, red])
+test19 = TestCase $ assertEqual "refill"  testList8 (refill testList3 [dark green, red, white, white])
+test20 = TestCase $ assertEqual "refillAux"  testList8 (refillAux testList3 [] [dark green, red, white, white])
+test21 = TestCase $ assertEqual "recolor"  testList8 (recolor testList3 [dark green, red, white, white, red])
+-- klara
 test22 = TestCase $ assertEqual "updateLocationY1" (100.0) (updateLocationY testList 8)
 test23 = TestCase $ assertEqual "updateLocationY2" (-200.0) (updateLocationY testList ((length testList)-1))
 test24 = TestCase $ assertEqual "updateLocationY3" (200.0) (updateLocationY testList 0)
 test25 = TestCase $ assertEqual "moveBlack" testList10 (moveBlack testList9)
-test26 = TestCase $ assertEqual "moveBlack" testList10 (moveBlackAux testList9 5 (6))
-test27 = TestCase $ assertEqual "for moveBlackAux testListBlack 1 2 ," ([(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),black),(((100.0,200.0),4),black),(((200.0,200.0),5),black),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),green),(((100.0,100.0),9),green),(((200.0,100.0),10),red),(((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]) (moveBlackAux testListBlack 1 2) 
+test26 = TestCase $ assertEqual "moveBlack" testList10 (moveBlackAux testList9 8 9)
 
 -- MoveSquare cant be tested since it requires a complete playing field of at least 5*5. When that criteria is met the output is way too big to test.
 
-test28 = TestCase $ assertEqual "for createCandy [1,2,3] ," ([(((1.0,2.0),5),red),(((3.0,4.0),6),red),(((5.0,6.0),7),blue),(((7.0,8.0),8),blue)]) (createCandy 4 [red,red,blue,blue] [(1,2),(3,4),(5,6),(7,8)])
-test29 = TestCase $ assertEqual "for createCandy [1,2,3] ," ([(((1.0,2.0),5),white),(((3.0,4.0),6),white),(((5.0,6.0),7),blue),(((7.0,8.0),8),blue)]) (createCandy 4 [white,white,blue,blue] [(1,2),(3,4),(5,6),(7,8)])
+test27 = TestCase $ assertEqual "for createCandy [1,2,3] ," ([(((1.0,2.0),5),red),(((3.0,4.0),6),red),(((5.0,6.0),7),blue),(((7.0,8.0),8),blue)]) (createCandy 4 [red,red,blue,blue] [(1,2),(3,4),(5,6),(7,8)])
+test28 = TestCase $ assertEqual "for createCandy [1,2,3] ," ([(((1.0,2.0),5),white),(((3.0,4.0),6),white),(((5.0,6.0),7),blue),(((7.0,8.0),8),blue)]) (createCandy 4 [white,white,blue,blue] [(1,2),(3,4),(5,6),(7,8)])
 
-test30 = TestCase $ assertEqual "for candyLocations 5 ((-200),200) ," [(-200.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (candyLocations 1 ((-200),200))
+test29 = TestCase $ assertEqual "for candyLocations 8 ((-200),200) ," [(-350.0,350.0),(-250.0,350.0),(-150.0,350.0),(-50.0,350.0),(50.0,350.0),(150.0,350.0),(250.0,350.0),(350.0,350.0),(-350.0,250.0),(-250.0,250.0),(-150.0,250.0),(-50.0,250.0),(50.0,250.0),(150.0,250.0),(250.0,250.0),(350.0,250.0),(-350.0,150.0),(-250.0,150.0),(-150.0,150.0),(-50.0,150.0),(50.0,150.0),(150.0,150.0),(250.0,150.0),(350.0,150.0),(-350.0,50.0),(-250.0,50.0),(-150.0,50.0),(-50.0,50.0),(50.0,50.0),(150.0,50.0),(250.0,50.0),(350.0,50.0),(-350.0,-50.0),(-250.0,-50.0),(-150.0,-50.0),(-50.0,-50.0),(50.0,-50.0),(150.0,-50.0),(250.0,-50.0),(350.0,-50.0),(-350.0,-150.0),(-250.0,-150.0),(-150.0,-150.0),(-50.0,-150.0),(50.0,-150.0),(150.0,-150.0),(250.0,-150.0),(350.0,-150.0),(-350.0,-250.0),(-250.0,-250.0),(-150.0,-250.0),(-50.0,-250.0),(50.0,-250.0),(150.0,-250.0),(250.0,-250.0),(350.0,-250.0),(-350.0,-350.0),(-250.0,-350.0),(-150.0,-350.0),(-50.0,-350.0),(50.0,-350.0),(150.0,-350.0),(250.0,-350.0),(350.0,-350.0)] (candyLocations 8 ((-200),200))
 
-test31 = TestCase $ assertEqual "for mkMarker initState (0,0) ," (Pictures [Translate 0.0 0.0 (Color (white) (Line [(-50.0,-50.0),(-50.0,50.0),(50.0,50.0),(50.0,-50.0),(-50.0,-50.0)]))])    (mkMarker initState (0,0))
-test32 = TestCase $ assertEqual "for mkMarker initState (0,0) ," (Pictures [Translate 100.0 0.0 (Color (white) (Line [(-50.0,-50.0),(-50.0,50.0),(50.0,50.0),(50.0,-50.0),(-50.0,-50.0)]))])    (mkMarker initState (100,0))
+test30 = TestCase $ assertEqual "for mkMarker initState (0,0) ," (Pictures [Translate 0.0 0.0 (Color (white) (Line [(-50.0,-50.0),(-50.0,50.0),(50.0,50.0),(50.0,-50.0),(-50.0,-50.0)]))])    (mkMarker initState (0,0))
+test31 = TestCase $ assertEqual "for mkMarker initState (0,0) ," (Pictures [Translate 100.0 0.0 (Color (white) (Line [(-50.0,-50.0),(-50.0,50.0),(50.0,50.0),(50.0,-50.0),(-50.0,-50.0)]))])    (mkMarker initState (100,0))
 
-test33 = TestCase $ assertEqual "for randColorGen [1,2,3] ," [red, white, blue] (randColorGen [1,2,3])
-test34 = TestCase $ assertEqual "for randColorGen [4,5,6] ," [dark(dark violet), rose, dark green] (randColorGen [4,5,6])
+test32 = TestCase $ assertEqual "for randColorGen [1,2,3] ," [red, white, (greyN 0.2)] (randColorGen [1,2,3])
+test33 = TestCase $ assertEqual "for randColorGen [4,5,6] ," [dark (dark violet), rose, dark green] (randColorGen [4,5,6])
 
-test35 = TestCase $ assertEqual "for getColor 3 ," (blue) (getColor 3)
-test36 = TestCase $ assertEqual "for getColor 2 ," (white) (getColor 2)
-test37 = TestCase $ assertEqual "for getColor 1 ," (red) (getColor 1)
+test34 = TestCase $ assertEqual "for getColor 3 ," (greyN 0.2) (getColor 3)
+test35 = TestCase $ assertEqual "for getColor 2 ," (white) (getColor 2)
+test36 = TestCase $ assertEqual "for getColor 1 ," (red) (getColor 1)
 
-test38 = TestCase $ assertEqual "for squareLocations 5 ((-200),200)," [(-400.0,400.0),(-300.0,400.0),(-200.0,400.0),(-100.0,400.0),(0.0,400.0),(-200.0,300.0),(-100.0,300.0),(0.0,300.0),(100.0,300.0),(200.0,300.0),(-200.0,200.0),(-100.0,200.0),(0.0,200.0),(100.0,200.0),(200.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 5 ((-400),400))
+test37 = TestCase $ assertEqual "for squareLocations 8 ((-200),200)," [(-350.0,350.0),(-250.0,350.0),(-150.0,350.0),(-50.0,350.0),(50.0,350.0),(150.0,350.0),(250.0,350.0),(350.0,350.0),(-350.0,250.0),(-250.0,250.0),(-150.0,250.0),(-50.0,250.0),(50.0,250.0),(150.0,250.0),(250.0,250.0),(350.0,250.0),(-350.0,150.0),(-250.0,150.0),(-150.0,150.0),(-50.0,150.0),(50.0,150.0),(150.0,150.0),(250.0,150.0),(350.0,150.0),(-350.0,50.0),(-250.0,50.0),(-150.0,50.0),(-50.0,50.0),(50.0,50.0),(150.0,50.0),(250.0,50.0),(350.0,50.0),(-350.0,-50.0),(-250.0,-50.0),(-150.0,-50.0),(-50.0,-50.0),(50.0,-50.0),(150.0,-50.0),(250.0,-50.0),(350.0,-50.0),(-350.0,-150.0),(-250.0,-150.0),(-150.0,-150.0),(-50.0,-150.0),(50.0,-150.0),(150.0,-150.0),(250.0,-150.0),(350.0,-150.0),(-350.0,-250.0),(-250.0,-250.0),(-150.0,-250.0),(-50.0,-250.0),(50.0,-250.0),(150.0,-250.0),(250.0,-250.0),(350.0,-250.0),(-350.0,-350.0),(-250.0,-350.0),(-150.0,-350.0),(-50.0,-350.0),(50.0,-350.0),(150.0,-350.0),(250.0,-350.0),(350.0,-350.0)] (squareLocations 8 ((-200),200))
 
-test39 = TestCase $ assertEqual "for squareLocations 4 ((-200),100)," [(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 4 ((-200),100))
+{-test38 = TestCase $ assertEqual "for squareLocations 4 ((-200),200)," [(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 4 ((-200),100))
 
-test40 = TestCase $ assertEqual "for squareLocations 5 ((-400),200)," [(-400.0,200.0),(-300.0,200.0),(-200.0,200.0),(-100.0,200.0),(0.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 5 ((-400),200))
+test39 = TestCase $ assertEqual "for squareLocations 5 ((-400),200)," [(-400.0,200.0),(-300.0,200.0),(-200.0,200.0),(-100.0,200.0),(0.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 5 ((-400),200))-}
 
-test41 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore initState)
+test40 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore initState)
+
+test41 = TestCase $ assertEqual "showTime" (Text "119") (showTime (Player {squareLoc = (100.0,100.0), playerColor = white, squareIndex = 1.0, candyBank = [], moveState = False, gameState = 2, colorBank = [], score = 0, time = 119}))
+
+test42 = TestCase $ assertEqual "countBlack" 3 (countBlack testList9 0)
 
 
 
@@ -702,38 +726,24 @@ test41 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore ini
 testlist = testList :: [Candy]
 testList = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
 
-testlistBlack = testListBlack :: [Candy]
-testListBlack = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),black),(((100.0,100.0),9),black),(((200.0,100.0),10),black),(((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList1 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),red),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
-testList1 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList2 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),red),(((-150.0,250.0),11),(greyN 0.2)),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
+testList3 = [(((-350.0,350.0),1),black),(((-250.0,350.0),2),black),(((-150.0,350.0),3),black)]++ (drop 3 testList6)
 
-testList2 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),green),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),green),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList4 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),black),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),black),(((-150.0,250.0),11),(greyN 0.2)),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),black),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
-testList3 = [(((-200.0,200.0),1),black),(((-100.0,200.0),2),black),(((0.0,200.0),3),black),(((100.0,200.0),4),black)]++ (drop 4 testList7)
-
-testList4 = [(((-200.0,200.0),1),black),(((-100.0,200.0),2),green),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),black),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),black),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
-
-testList5 = [(((-200.0,200.0),1),black),(((-100.0,200.0),2),black),(((0.0,200.0),3),black),(((100.0,200.0),4),black),(((200.0,200.0),5),red),(((-200.0,100.0),6),black),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),black),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
-
-testList6 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),green),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),red),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList5 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),black),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),black),(((-150.0,250.0),11),(greyN 0.2)),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),black),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
 
-testList7 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),green),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),red),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList6 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),dark (dark violet)),(((-150.0,350.0),3),dark (dark violet)),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),red),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
-testList8 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),red),(((0.0,200.0),3),white),(((100.0,200.0),4),white),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),red),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList8 = [(((-350.0,350.0),1), dark green),(((-250.0,350.0),2),red),(((-150.0,350.0),3),white),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),red),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
-testList9 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),
-             (((-200.0,100.0),6),green),(((-100.0,100.0),7),black),(((0.0,100.0),8),black),(((100.0,100.0),9),black),(((200.0,100.0),10),blue),
-             (((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),
-             (((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),
-             (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
-
-testList10 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),black),(((0.0,200.0),3),black),(((100.0,200.0),4),black),(((200.0,200.0),5),red),
-              (((-200.0,100.0),6),green),(((-100.0,100.0),7),white),(((0.0,100.0),8),green),(((100.0,100.0),9),green),(((200.0,100.0),10),blue),
-              (((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),
-              (((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),
-              (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList9 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),black),(((-50.0,250.0),12),black),(((50.0,250.0),13),black),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
+  
+testList10 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),black),(((-50.0,350.0),4),black),(((50.0,350.0),5),black),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),yellow),(((-50.0,250.0),12),rose),(((50.0,250.0),13),(greyN 0.2)),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
 
