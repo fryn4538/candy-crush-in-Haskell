@@ -1,9 +1,9 @@
-
+module Main(main) where
 import System.IO.Unsafe  -- be careful! 
 import Debug.Trace
 import Graphics.Gloss
 --import Graphics.Gloss.Data.Color (makeColor, red)
---import Graphics.Gloss.Data.ViewPort
+import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
 --import Graphics.Gloss.Data.ViewPort
 --import Control.Exception
@@ -36,8 +36,6 @@ data Player = Player
      score :: Int,
      time :: Float
   } deriving Show
---delay :: c -> IO a -> IO a
---delay _ _ = threadDelay 10000 >> 10000
 
 -- In order to get random candies we chose a random element from a list.
 -- Saved values --
@@ -51,8 +49,8 @@ data Player = Player
    RETURNS: the number of rows on the gameboard.
    EXAMPLES: boxes -> 9
 -}
-boxes :: Player -> Float
-boxes player = gridSize player
+boxes :: Float
+boxes = 9
 
 {- boxesInt
    Converts boxes into an Int.
@@ -60,22 +58,17 @@ boxes player = gridSize player
    EXAMPLES: boxesInt -> 9
 -}
 boxesInt :: Int
-boxesInt = round (boxes initState)
+boxesInt = round boxes
 
 
 {- main
    A gameloop that updates the game after every move.
-   ???
+   RETURNS: unit
 -}
 main :: IO ()
-main = play
-       window
-       background
-       fps
-       initState
-       render
-       handleKeys
-       timer --(const id) -- Löst så att rutan inte flyttas med (const id)
+main = if (gameState initState) == 1
+          then play window background fps initStateMenu renderMenu handleKeys (const id)  -- Löst så att rutan inte flyttas med (const id)
+          else play window background fps initStateMenu render handleKeys timer
 ------------------------ Playfunktionens argument ----------------------------------------------
 {- window
    Tells the main function to run in fullscreen.
@@ -109,17 +102,17 @@ fps = 1
    Examples initState -> Player {squareLoc = (-400.0,400.0), playerColor = RGBA 1.0 1.0 1.0 1.0, squareIndex = 1.0, candyBank = [(((100.0,100.0),1),RGBA 0.0 1.0 0.0 1.0)..(((100.0,100.0),81),RGBA 0.0 1.0 0.0 1.0)], moveState = False, gameState = 2, colorBank = [RGBA 1.0 0.0 0.0 1.0..RGBA 1.0 0.0 1.0 1.0], score = 0}
 -}
 initState :: Player
-initState =  Player {squareLoc = (((-(((boxes initState)*50)-50)),(((boxes initState)*50)-50))),
+initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
                      menuLoc = (-400),
                      gridSize = 6,
                      squareIndex = 1,
                      playerColor = white,
                      colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
-                     candyBank =  refill (checkRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations (boxes initState) ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))),        
+                     candyBank =  refill (checkRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))),        
                      moveState = False,
                      gameState = 2,
                      score = 0,
-                     time = 20}
+                     time = 120}
 
 {- render player
    Generates the grphics of the game.
@@ -129,7 +122,7 @@ initState =  Player {squareLoc = (((-(((boxes initState)*50)-50)),(((boxes initS
 render :: Player -> Picture
 render player
    | (gameState player) == 1 = pictures ([(Color green $ translate (-400) 200 $ text ("Candy Break"))] ++ (startBox 5 (-400) (-200)) ++ (startTxt 5 (-454) (-226)) ++ [menuMarker player])
-   | (gameState player) == 2 = pictures ((paintRectangles (squareLocations (boxes initState) (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)] ++ [Color green $ translate 500 0 $ showTime player])
+   | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)] ++ [Color green $ translate 500 0 $ showTime player])
    | (gameState player) == 3 = pictures [(Color green $ translate (-600) 0 $ text ("Your score was: " ++ show (score player)))]
 
 
@@ -157,7 +150,7 @@ handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
 
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player
   | (gameState player) == 1 = player
-  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = ((score player) + countBlack ((moveCandy (squareIndex player) "Down" (candyBank player))) 0)}
   | otherwise = moveSquare 0 (-100) player
 
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player
@@ -171,7 +164,7 @@ handleKeys (EventKey (SpecialKey KeyRight) Down _ _) player
   | otherwise = moveSquare 100 0 player
   
 handleKeys (EventKey (SpecialKey KeyEnter) Down _ _) player
-  | (gameState player) == 1 = initState {gridSize = (gridSize player)}
+  | (gameState player) == 1 = initState {time = 100}
   | moveState player = player { playerColor = white, moveState = False}
   | otherwise = player {playerColor = violet, moveState = True}
   
@@ -188,8 +181,8 @@ handleKeys _ player = player
 verifyMoveCandy :: Float -> Float -> Float -> Bool
 verifyMoveCandy moveX moveY index   | mod (floor index) boxesInt == 1 && moveX < 0 =  False
                                     | mod (floor index) boxesInt == 0 && moveX > 0 =  False
-                                    | index <= (boxes initState) && moveY > 0 = False
-                                    | index > (((boxes initState)*(boxes initState))-(boxes initState)) && moveY < 0 =  False
+                                    | index <= boxes && moveY > 0 = False
+                                    | index > ((boxes*boxes)-boxes) && moveY < 0 =  False
                                     | otherwise = True
 
  {- verifySwapCandy index candyList string
@@ -200,8 +193,8 @@ verifyMoveCandy moveX moveY index   | mod (floor index) boxesInt == 1 && moveX <
   -}
                                    
 verifySwapCandy :: Float -> [Candy] -> String -> Bool
-verifySwapCandy index candyList "Up" = moveCandy index "Up" candyList == (moveCandyAux (floor index) (snd(candyList !! floor(index-((boxes initState)+1)))) (snd(candyList !! (floor (index-1)))) "Up" candyList) 
-verifySwapCandy index candyList "Down" = moveCandy index "Down" candyList == (moveCandyAux (floor index) (snd(candyList !! floor(index+((boxes initState)-1)))) (snd(candyList !! (floor (index-1)))) "Down" candyList) 
+verifySwapCandy index candyList "Up" = moveCandy index "Up" candyList == (moveCandyAux (floor index) (snd(candyList !! floor(index-(boxes+1)))) (snd(candyList !! (floor (index-1)))) "Up" candyList) 
+verifySwapCandy index candyList "Down" = moveCandy index "Down" candyList == (moveCandyAux (floor index) (snd(candyList !! floor(index+(boxes-1)))) (snd(candyList !! (floor (index-1)))) "Down" candyList) 
 verifySwapCandy index candyList "Right" = moveCandy index "Right" candyList == (moveCandyAux (floor (index)) (snd(candyList !! floor(index))) (snd(candyList !! (floor (index-1)))) "Right" candyList) 
 verifySwapCandy index candyList "Left" = moveCandy index "Left" candyList  == (moveCandyAux (floor (index)) (snd(candyList !! floor(index-2))) (snd(candyList !! (floor (index-1)))) "Left" candyList) 
 
@@ -229,8 +222,8 @@ checkHorizontalRows 1 1 0 [] [green, green, green, red, blue, green, pink, pink,
 -}       
 checkHorizontalRows :: Float -> Float -> Int -> [((Float,Int),String)] -> [Candy] -> [Candy] -> [Candy]
 checkHorizontalRows index startIndex counter listOfRows unchanged ((((a,b),candyIndex),color):xs)
-      | index == ((boxes initState)*(boxes initState)) && color == snd((((a,b),candyIndex),color)) && (candyIndex `mod` boxesInt) == 0 &&  counter > 1 && color /= black  = checkVerticalRows 1 1 0 1 (((startIndex,(counter+1)),"H"):listOfRows) unchanged
-      | index == ((boxes initState)*(boxes initState)) = checkVerticalRows 1 1 0 1 listOfRows unchanged
+      | index == (boxes*boxes) && color == snd((((a,b),candyIndex),color)) && (candyIndex `mod` boxesInt) == 0 &&  counter > 1 && color /= black  = checkVerticalRows 1 1 0 1 (((startIndex,(counter+1)),"H"):listOfRows) unchanged
+      | index == (boxes*boxes) = checkVerticalRows 1 1 0 1 listOfRows unchanged
       | color == snd(head(xs)) && (candyIndex `mod` boxesInt) /= 0 &&  counter == 0 = checkHorizontalRows (index+1) index (counter+1) listOfRows unchanged xs
       | color == snd(head(xs)) && (candyIndex `mod` boxesInt) /= 0 &&  counter > 0 && color /= black = checkHorizontalRows (index+1) startIndex (counter+1) listOfRows unchanged xs
       | color == snd(head(xs)) && (candyIndex `mod` boxesInt) == 0 &&  counter > 1 && color /= black = checkHorizontalRows (index+1) index 0 (((startIndex,(counter+1)),"H"):listOfRows) unchanged xs
@@ -250,17 +243,17 @@ checkVerticalRows 1 1 0 1 [((1.0,3),"H")] [green, green, green, red, blue, red, 
 
 checkVerticalRows :: Float -> Float -> Int -> Float -> [((Float,Int),String)] -> [Candy]  -> [Candy]
 checkVerticalRows index startIndex counter row listOfRows unchanged
-      | index == ((boxes initState)*(boxes initState)) && snd(unchanged !! (floor (index-((boxes initState)+1)))) == snd(unchanged !! ((floor (index-1)))) && counter > 1  =  makeBlackV (((startIndex,(counter+1)),"V"):listOfRows) 0 unchanged
-      | index == ((boxes initState)*(boxes initState)) = makeBlackV listOfRows 0 unchanged 
+      | index == (boxes*boxes) && snd(unchanged !! (floor (index-(boxes+1)))) == snd(unchanged !! ((floor (index-1)))) && counter > 1  =  makeBlackV (((startIndex,(counter+1)),"V"):listOfRows) 0 unchanged
+      | index == (boxes*boxes) = makeBlackV listOfRows 0 unchanged 
       | indexCheck && counter <= 1 = checkVerticalRows (row+1) startIndex 0 (row+1) listOfRows unchanged
       | indexCheck && counter > 1  = checkVerticalRows (row+1) startIndex 0 (row+1) (((startIndex,(counter+1)),"V"):listOfRows) unchanged
-      | colorCheck && counter == 0 && blackCheck = checkVerticalRows (index+(boxes initState)) index (counter+1) row listOfRows unchanged
-      | colorCheck && counter >  0 && blackCheck = checkVerticalRows (index+(boxes initState)) startIndex (counter+1) row listOfRows unchanged
-      |snd(unchanged !! (floor (index-1))) /= snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter > 1 =checkVerticalRows (index+(boxes initState)) 0 0 row (((startIndex,(counter+1)),"V"):listOfRows) unchanged
-      | snd(unchanged !! (floor (index-1))) /= snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter <= 1 =checkVerticalRows (index+(boxes initState)) 0 0 row listOfRows unchanged
-      | otherwise = checkVerticalRows (index+(boxes initState)) 0 0 row listOfRows unchanged
+      | colorCheck && counter == 0 && blackCheck = checkVerticalRows (index+boxes) index (counter+1) row listOfRows unchanged
+      | colorCheck && counter >  0 && blackCheck = checkVerticalRows (index+boxes) startIndex (counter+1) row listOfRows unchanged
+      |snd(unchanged !! (floor (index-1))) /= snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter > 1 =checkVerticalRows (index+boxes) 0 0 row (((startIndex,(counter+1)),"V"):listOfRows) unchanged
+      | snd(unchanged !! (floor (index-1))) /= snd(unchanged !! ((floor (index-1)) + boxesInt)) && counter <= 1 =checkVerticalRows (index+boxes) 0 0 row listOfRows unchanged
+      | otherwise = checkVerticalRows (index+boxes) 0 0 row listOfRows unchanged
       where
-        indexCheck = (index > ((boxes initState)*((boxes initState)-1)))
+        indexCheck = (index > (boxes*(boxes-1)))
         colorCheck = (snd(unchanged !! (floor (index-1))) == snd(unchanged !! ((floor (index-1)) + boxesInt)))
         blackCheck = (snd(unchanged !! (floor (index-1))) /= black)
 
@@ -275,8 +268,8 @@ checkVerticalRows index startIndex counter row listOfRows unchanged
 moveCandy :: Float -> String -> [Candy] -> [Candy]
 moveCandy index "Right" candyList =  checkRows(moveCandyAux (floor (index)) (snd(candyList !! floor(index))) (snd(candyList !! (floor (index-1)))) "Right" candyList) 4
 moveCandy index "Left" candyList =  checkRows(moveCandyAux (floor (index)) (snd(candyList !! floor(index-2))) (snd(candyList !! (floor (index-1)))) "Left" candyList) 4
-moveCandy index "Up" candyList =  checkRows(moveCandyAux (floor index) (snd(candyList !! floor(index-((boxes initState)+1)))) (snd(candyList !! (floor (index-1)))) "Up" candyList) 4
-moveCandy index "Down" candyList =  checkRows(moveCandyAux (floor index) (snd(candyList !! floor(index+((boxes initState)-1)))) (snd(candyList !! (floor (index-1)))) "Down" candyList) 4
+moveCandy index "Up" candyList =  checkRows(moveCandyAux (floor index) (snd(candyList !! floor(index-(boxes+1)))) (snd(candyList !! (floor (index-1)))) "Up" candyList) 4
+moveCandy index "Down" candyList =  checkRows(moveCandyAux (floor index) (snd(candyList !! floor(index+(boxes-1)))) (snd(candyList !! (floor (index-1)))) "Down" candyList) 4
 
 
 {- moveCandyAux index color color2 direction candyList
@@ -425,26 +418,26 @@ moveSquare moveX moveY player = trace ("z' = " ++ show z') $ player { squareLoc 
     bank = candyBank player
     
 
-    z' | y >= (((boxes initState) * 50)-50) && moveY > 0 = z
-       | y <= ((-((boxes initState) * 50)+50)) && moveY < 0 = z
-       | x >= (((boxes initState) * 50)-50) && moveX > 0 = z
-       | x <= ((-((boxes initState) * 50)+50)) && moveX < 0 = z
+    z' | y >= ((boxes * 50)-50) && moveY > 0 = z
+       | y <= ((-(boxes * 50)+50)) && moveY < 0 = z
+       | x >= ((boxes * 50)-50) && moveX > 0 = z
+       | x <= ((-(boxes * 50)+50)) && moveX < 0 = z
        | moveX /= 0 = (z + (moveX/100))
-       | moveY /= 0 = (z + (((moveY/100)*(boxes initState))*(-1)))
+       | moveY /= 0 = (z + (((moveY/100)*boxes))*(-1))
        | otherwise = z
        
     -- New locations. -- Nu kan man inte gå ut ur fönstret.
-    x' | x >= (((boxes initState) * 50)-50) && moveX >= 0 = x
-       | x >= (((boxes initState) * 50)-50) && moveX < 0 = updateLocationX bank (floor(z')-1)
-       | x <= (-(((boxes initState) * 50)-50)) && moveX <= 0 = x
-       | x <= (-(((boxes initState) * 50)-50)) && moveX > 0 = updateLocationX  bank (floor(z')-1)
+    x' | x >= ((boxes * 50)-50) && moveX >= 0 = x
+       | x >= ((boxes * 50)-50) && moveX < 0 = updateLocationX bank (floor(z')-1)
+       | x <= (-((boxes * 50)-50)) && moveX <= 0 = x
+       | x <= (-((boxes * 50)-50)) && moveX > 0 = updateLocationX  bank (floor(z')-1)
        | otherwise = updateLocationX bank (floor(z')-1)
        
    -- x' = x - move
-    y' | y >= (((boxes initState) * 50)-50) && moveY >= 0 = y
-       | y >= (((boxes initState) * 50)-50) && moveY < 0 = updateLocationY bank (floor(z')-1)
-       | y <= (-(((boxes initState) * 50)-50)) && moveY <= 0 = y
-       | y <= (-(((boxes initState) * 50)-50)) && moveY > 0 = updateLocationY bank (floor(z')-1)
+    y' | y >= ((boxes * 50)-50) && moveY >= 0 = y
+       | y >= ((boxes * 50)-50) && moveY < 0 = updateLocationY bank (floor(z')-1)
+       | y <= (-((boxes * 50)-50)) && moveY <= 0 = y
+       | y <= (-((boxes * 50)-50)) && moveY > 0 = updateLocationY bank (floor(z')-1)
        | otherwise = updateLocationY bank (floor(z')-1)
 
 {- updateLocationX bank z
@@ -500,9 +493,9 @@ paintCandy ((((a,b),int),col):xs) = [Color col $ translate a b $ rectangleSolid 
 -}
 candyLocations :: Float -> (Float, Float)-> [(Float,Float)]
 candyLocations 0  (a,b)
-  | a > 200 && b < (-(((boxes initState)*100)-400)) = []
-  | otherwise = candyLocations (boxes initState) ((-200), b-100)
-candyLocations num (a,b) = [(a-((((boxes initState)*100)-500) / 2),b+((((boxes initState)*100)-500) / 2))] ++ candyLocations (num-1) (a+100,b)
+  | a > 200 && b < (-((boxes*100)-400)) = []
+  | otherwise = candyLocations boxes ((-200), b-100)
+candyLocations num (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ candyLocations (num-1) (a+100,b)
 
 
 {- mkMarker player (x,y)
@@ -578,10 +571,10 @@ EXAMPLE: squareLocations 5 ((-200),200) ==
 -}
 squareLocations :: Float -> (Float, Float)-> [(Float,Float)]
 squareLocations 0  (a,b)
-  | a > 200 && b < (-(((boxes initState)*100)-400)) = []
-  | otherwise = squareLocations (boxes initState) ((-200), b-100)
+  | a > 200 && b < (-((boxes*100)-400)) = []
+  | otherwise = squareLocations boxes ((-200), b-100)
  
-squareLocations num (a,b) = [(a-((((boxes initState)*100)-500) / 2),b+((((boxes initState)*100)-500) / 2))] ++ squareLocations (num-1) (a+100,b)
+squareLocations num (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ squareLocations (num-1) (a+100,b)
 
 
 
@@ -637,6 +630,12 @@ startTxt n x y = [Color black $ translate x y $ scale 0.5 0.5 $ text ((show n) +
 menuMarker :: Player -> Picture
 menuMarker player = (Color white $ translate (menuLoc player) (-200) $ lineLoop $ rectanglePath 150 100)
 
+countBlack :: [Candy] -> Int -> Int
+countBlack [] n = n
+countBlack (x:xs) n
+  | snd x == black = countBlack xs (n+1)
+  | otherwise = countBlack xs n
+
 moveMenu :: Float
             -> Player -- The previous game state
             -> Player -- A new game state with an updated square position
@@ -661,11 +660,11 @@ moveMenu moveX player = player {menuLoc = x', gridSize = grid'}
 
 rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test27, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test38, test39, test40, test41]
 
-test1 = TestCase $ assertEqual "boxes" 5 ((boxes initState))
+test1 = TestCase $ assertEqual "boxes" 5 (boxes)
 test2 = TestCase $ assertEqual "boxesInt" 5 (boxesInt)
 test3 = TestCase $ assertEqual "window" FullScreen (window)
 test4 = TestCase $ assertEqual "background" black (background)
-test5 = TestCase $ assertEqual "fps" 60 (fps)
+test5 = TestCase $ assertEqual "fps" 1 (fps)
 
 test6 = TestCase $ assertEqual "paintCandy1" ([Color black (Translate 100.0 100.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)]))]) (paintCandy [(((100,100),1),black)])
 test7 = TestCase $ assertEqual "paintCandy2" ([Color (black) (Translate 100.0 100.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)])),Color (red) (Translate 100.0 0.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)]))]) (paintCandy [(((100,100),1),black),(((100,0),2),red)])
@@ -673,7 +672,7 @@ test7 = TestCase $ assertEqual "paintCandy2" ([Color (black) (Translate 100.0 10
 test8 =  TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationX testList1 5)
 test9 =  TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationX testList1 0)
 test10 = TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationY testList1 ((length testList1)-1))
-test11 = TestCase $ assertEqual "VerifyDownMove" False (verifyMoveCandy 0 (-100) ((boxes initState)*(boxes initState)))
+test11 = TestCase $ assertEqual "VerifyDownMove" False (verifyMoveCandy 0 (-100) (boxes*boxes))
 test12 = TestCase $ assertEqual "VerifyRightMove" True (verifyMoveCandy 100 0 (3))
 test13 = TestCase $ assertEqual "VerifySwapCandy" False (verifySwapCandy 1 testList1 "Right" )
 test14 = TestCase $ assertEqual "VerifySwapCandy" True (verifySwapCandy 2 testList1 "Right" )
@@ -756,4 +755,9 @@ testList10 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),black),(((0.0,200.0
               (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+testtest :: [Candy]
+testtest = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),
+            (((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),blue),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),
+            (((-200.0,0.0),11),green),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),
+            (((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),red),(((200.0,-100.0),20),white),
+            (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
