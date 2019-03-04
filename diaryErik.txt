@@ -22,10 +22,9 @@ mkMarker
 2h --18/02
 
 ----------
-Jag städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet.
+Jag städade upp kod och sett till att spelaren ej kan ta sig utanför spelområdet genom att uppdatera moveSquare funktionen.
 
-2h --18/02
-
+2h --18/02 
 ----------
 Jag ritade första godisarna i paint.
 15Min --20/02
@@ -54,6 +53,8 @@ Jag bestämde att vi behöver en variabel Int för att hålla koll på vilken ma
 2h -- 21/02
 ----------
 Jag har skapat en funktion för att markera den godisen som ska flyttas på med en annan färgad rektangel. 
+
+mkMarker
 30 min --21/02
 
 
@@ -75,7 +76,6 @@ checkRows
 ----------
 Jag skapade en funktion för att byta mellan olika gamestates i handleKeys. Gamestate byts med tangenterna 1 & 2 och är i nuläget endast en svart skärm och spelet.
 
---OBS denna funktion används inte i det slutgiltiga spelet men lämnades för eventuell utveckling i framtiden
 1h -- 23/02
 
 ----------
@@ -131,4 +131,14 @@ moveBlack
 Introduction and purpose
 
 5h -- 27->28/02
+
+
+Skrivit kommentarer för samtliga listor som används i testCases
+skrivit följande i rapport:
+Known shortcomings of the program 
+	--recognizing overlapping rows
+	--image handling
+Conclusion
+	
+2h --01/03
  

@@ -2,11 +2,7 @@
 import System.IO.Unsafe  -- be careful! 
 import Debug.Trace
 import Graphics.Gloss
---import Graphics.Gloss.Data.Color (makeColor, red)
---import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
---import Graphics.Gloss.Data.ViewPort
---import Control.Exception
 import Graphics.Gloss.Data.Picture
 import System.Random
 import Control.Monad
@@ -20,8 +16,34 @@ type Candy = (((Float,Float),Int),Color)
            -- (Float, Float) is the candy's coordinates
            -- Int is the 'spot' of the candy on the playing field
            -- Color is the candy's color
-{-
- ???
+         
+{- Description of every attribute
+
+     squareLoc : The current coordinates of the player, in the form of two floats
+     menuLoc :: The x-coordinate of the player while in gamestate 1. This coordinate increases and decreases when the player moves across the different gameboard-size selections
+     gridSize :: Represents which gameboard size the player chooses at the beginning of the game
+     playerColor :: Represents the color of the player
+     squareIndex :: Represents the current index of the player (squareIndex = 1 means that the player is currently sat on the top left square)
+     candyBank :: Represents the current constellation of candies. In other words, this is a list of every candy on screen, in order
+     moveState :: Either True or False. While true, the player is in a moveState. While in a moveState, the players next move switches two candies (if move is valid)
+     gameState :: Represents what the function render renders on screen. 1 = startScreen, 2 = game, 3 = gameover
+     colorBank :: 10 000 random colors, generated at the start of the game. When new candies are generated after a valid move, their colors are chosen from the first elements of colorBank
+     score :: The players current score. Increases by the number of candies crushed every move. 
+     time :: How much time left until gameover.
+
+  INVARIANTS
+     squareLoc :: Within the borders of the gameboard
+     menuLoc :: y-coordinate never changes
+     gridSize :: Either 5*5, 6*6, 7*7, 8*8, 9*9
+     playerColor :: Either white or violet
+     squareIndex :: Somewhere between 1 and gridsize
+     candyBank :: Length is gridsize
+     moveState :: True or False
+     gameState :: 1, 2 or 3
+     colorBank :: Length never exceeds 10 000
+     score :: >= 0
+     time :: >= 0
+
 -}
 data Player = Player
   {  squareLoc :: (Float, Float),
@@ -34,11 +56,7 @@ data Player = Player
      score :: Int,
      time :: Int
   } deriving Show
---delay :: c -> IO a -> IO a
---delay _ _ = threadDelay 10000 >> 10000
 
--- In order to get random candies we chose a random element from a list.
--- Saved values --
 
 
 
@@ -63,7 +81,7 @@ boxesInt = round boxes
 
 {- main
    A gameloop that updates the game after every move.
-   ???
+   Returns: This function returns all the different values given by its called functions. (Windows, background, etc.)
 -}
 main :: IO ()
 main = play
@@ -135,13 +153,14 @@ render player
 {- HandleKeys Event
      Receives a keystate and performs a functioncall depending on what key is pressed in what way.
      RETURNS: a new gamestate depending on wich key is pressed.
-     Keyup: Returns a gamestate where player position in candyList is changed to be n less.
-     KeyDown: Returns a gamestate where player position in candyList is changed to be n more.
+     Keyup: Returns a gamestate where player position in candyList is changed to be n less where n is the width of the playing field.
+     KeyDown: Returns a gamestate where player position in candyList is changed to be n more where n is the width of the playing field.
      KeyRight: Returns a gamestate where player position in candyList is changed to be 1 more.
      KeyLeft: Returns a gamestate where player position in candyList is changed to be 1 less.
-     SIDE EFFECTS: Updates the gamestate to a new gamestate that is printed out on the screen where various player values may  have changed.
+     SIDE EFFECTS: Updates the gamestate to a new gamestate that is printed out on the screen where the values of various player attributes may have changed depending on the key pressed.
      EXAMPLES: handleKeys (EventKey (Char '2') Down _ _) player == player {gameState = 2}
   -}
+   
 handleKeys :: Event -> Player -> Player
 handleKeys (EventKey (Char '1') Down _ _) player = player {gameState = 1}
 handleKeys (EventKey (Char '2') Down _ _) player = player {gameState = 2}
@@ -201,7 +220,7 @@ verifyMoveCandy moveX moveY index   | mod (floor index) boxesInt == 1 && moveX <
      If a player tries to swap a candy, this function checks wether or not the swap results in at least one row with 3 or more candies of the same type.
      RETURNS: A Boolean, True or False
      EXAMPLES:
-     verifySwapCandy 10 (candyBank player) "Right" == True (This result is given if the moveCandy function finds any rows of 3 or more candies. Otherwise False)
+     verifySwapCandy 10 (candyBank player) "Right" == False (This result is given if the moveCandy function finds any rows of 3 or more candies. Otherwise True)
   -}
                                    
 verifySwapCandy :: Float -> [Candy] -> String -> Bool
@@ -223,12 +242,11 @@ checkRows list n
        | n > 0 =  checkRows (checkHorizontalRows 1 1 0 [] list list) (n-1)
        | otherwise = checkHorizontalRows 1 1 0 [] list list
 
-
+--[((Float,Int),String)] Is a list of tuples containing a startIndex and how many candies come after it. The string tells if the row is vertical or horizontal.
 {-  checkHorizontalRows index startIndex counter listOfRows unchanged candyList
      Checks if there are any candies in a horizontal row and calls checkVerticalRows with all rows found.
      VARIANT: index
      RETURNS: A new list of candies with one row of candies made black.
-     SIDE EFFECTS: updates the gamestate to show the new list with 
      EXAMPLES:
 checkHorizontalRows 1 1 0 [] [green, green, green, red, blue, green, pink, pink, green] [green, green, green, red, blue, green, pink, pink, green] 2 == [black, black, black, red, blue, green, pink, pink, green]
 -}       
@@ -248,7 +266,6 @@ checkHorizontalRows index startIndex counter listOfRows unchanged ((((a,b),candy
      Checks if there are any candies in a vertical row and calls makeBlackV with all rows found in both checkHorizontalRows and checkVerticalRows.
      VARIANT: index
      RETURNS: A new list of candies where the first row of candies that is found is made black.
-     SIDE EFFECTS: updates the gamestate to show the new list with 
      EXAMPLES:
 checkVerticalRows 1 1 0 1 [((1.0,3),"H")] [green, green, green, red, blue, red, pink, pink, green] == [black, black, black, red, blue, green, pink, pink, green] 
   -}
@@ -273,7 +290,6 @@ checkVerticalRows index startIndex counter row listOfRows unchanged
  {- moveCandy index string candyList
      The function swaps the color of a candy with the color of an adjacent candy depending on the value of the given string. And with the help of checkRows figures out if any new rows have appeared.
      RETURNS:  A new list of candies where each row of 3 or more of the same candies have their color set to black.
-     SIDE EFFECTS: creates a new gamestate where 2 candies have switched colors and one or more rows of candies have been blacked out.
      EXAMPLES: moveCandy 5 "Up" [green, blue, green, blue, green, green, pink, pink, green] == [black, black, black, blue, blue, green, pink, pink, green]
   -}
 
@@ -286,8 +302,8 @@ moveCandy index "Down" candyList =  checkRows(moveCandyAux (floor index) (snd(ca
 
 {- moveCandyAux index color color2 direction candyList
      Performs the swap between the colors of two adjacent candies.
-     RETURNS: A new candylist where the color value at index x and y have switched.
-     SIDE EFFECTS: creates a new gamestate where 2 candies have switched colors and one or more rows of candies have been blacked out.
+     RETURNS: A new candylist where the color value at index a and b have switched.
+     VARIANT: length candyList
      EXAMPLES: moveCandyAux 5 green red "Up" [green, blue, green, blue, green, green, pink, pink, green] == [black, black, black, blue, blue, green, pink, pink, green]
   -}
 
@@ -304,11 +320,11 @@ moveCandyAux ind color1 color2 direction ((((a,b),candyIndex),col):xs)
 
 
 
---[([Float],Int)] Is a list of tuples containing a startIndex and how many candies come after it.
+
+
 {- refill list colorBank
    moves blacked out spots to the top and fills them with colors from the colorBank
    RETURNS: A new candylist where all the blacked out spots have been moved to the top and filled with colors
-   SIDE EFFECTS: Creates a new gamestate where all blacked out spots have been moved up and filled with colors
    EXAMPLES: mkAllCol [green, green, yellow, red, blue, pink, black, black, black] colorBank = [pink, red, green, green, green, yellow, red, blue, pink]
 -}
 
@@ -319,21 +335,21 @@ refill list colorBank = refillAux list [] colorBank
 
 {- refillAux list temp colors
      moves blacked out spots to the top and fills them with colors
+     VARIANT: length list
      RETURNS: A new candylist where all the blacked out spots have been moved to the top and filled with colors
-     SIDE EFFECTS: Creates a new gamestate where all blacked out spots have been moved up and filled with colors
      EXAMPLES: refillAux [green, green, yellow, red, blue, pink, black, black, black] [] [pink, blue, blue] = [pink, blue, blue, green, green, yellow, red, blue, pink]
 -}
 
 refillAux :: [Candy] -> [Candy]-> [Color] -> [Candy]
-refillAux [] list _ = list
-refillAux list temp colors
-  | snd (head list) == black =  refillAux (checkRows (recolor (moveBlack (checkRows (temp ++ list) 1)) colors) 1) [] (tail colors)
-  | otherwise = refillAux (tail list) (temp ++ [(head list)]) colors
+refillAux [] baseListlist _ = baseList
+refillAux list baseList colors
+  | snd (head list) == black =  refillAux (checkRows (recolor (moveBlack (checkRows (baseList ++ list) 1)) colors) 1) [] (tail colors)
+  | otherwise = refillAux (tail list) (baseList ++ [(head list)]) colors
 
 {- recolor list colors
      recolors all blacked out candies
-     RETURNS: A new candylist where all the blacked out spots have been filled with colors
-     SIDE EFFECTS: Creates a new gamestate where all blacked out spots have been filled with colors
+     VARIANT: length list
+     RETURNS: A new candylist where all the blacked out spots have been filled with colored candies.
      EXAMPLES: recolor [black, black, black, red, blue, pink, red, green, red] colorBank = [pink, blue, blue, red, blue, pink, red, green, red]
 -}
 
@@ -345,8 +361,7 @@ recolor ((((a,b),int),col):xs) (c:cs)
 
 {- moveBlack list
     Calls moveBlackAux.
-    RETURNS: A new candylist with all black squares moved to the top.              .
-    SIDE EFFECTS: creates a new gamestate with the new list.
+    RETURNS: A new candylist with all black squares moved to the top row as far as possible.              .
     EXAMPLE: moveBlack [red, green, pink, black, black, black, blue, blue, yellow] = [black, black, black, red, green, pink, blue, blue, yellow]
 -}
 
@@ -355,10 +370,10 @@ moveBlack list = (moveBlackAux list (boxesInt) (boxesInt + 1))
 
 {- moveBlackAux list n m
     Moves black squares to the top
-    RETURNS: A new candylist with all black squares moved to the top.              .
-    SIDE EFFECTS: creates a new gamestate with the new list.
-    EXAMPLE: moveBlackAux 3 4 [red, green, pink, black, black, black, blue, blue, yellow] = [black, black, black, red, green, pink, blue, blue, yellow]
     VARIANT: n
+    RETURNS: A new candylist with all black squares moved to the top row as far as possible.              .
+    EXAMPLE: moveBlackAux 3 4 [red, green, pink, black, black, black, blue, blue, yellow] = [black, black, black, red, green, pink, blue, blue, yellow]
+    
 -}
 moveBlackAux :: [Candy] -> Int -> Int -> [Candy]
 moveBlackAux list n m
@@ -367,11 +382,11 @@ moveBlackAux list n m
   | (snd (list !! (m-1))) == black = trace ("m" ++ show m ++ " n" ++ show n) $ moveBlackAux (moveCandy (fromIntegral m) "Up" list) n (m+1)
   | otherwise = trace ("m" ++ show m ++ " n" ++ show n) $  moveBlackAux list n (m+1)
 {- makeBlackV rows counter list
-    Makes specified vertical row black. 
-    RETURNS: A new candylist with the row blacked out.
-    SIDE EFFECTS: creates a new gamestate with the new list.
-    EXAMPLE: makeBlackV [((1.0,3),"V")] 0 [red, green, pink, red, blue, red, red, blue, yellow] == [black, green, pink, black, blue, red, black, blue, yellow]
+    Makes specified vertical row black.
     VARIANT: (length list)
+    RETURNS: A new candylist with the row blacked out.
+    EXAMPLE: makeBlackV [((1.0,3),"V")] 0 [red, green, pink, red, blue, red, red, blue, yellow] == [black, green, pink, black, blue, red, black, blue, yellow]
+   
 -}
 makeBlackV :: [((Float,Int),String)] -> Int -> [Candy] -> [Candy]
 makeBlackV _ _ [] = []
@@ -384,11 +399,11 @@ makeBlackV (((startPoint,inRow),"V"):tail) counter ((((a,b),int),col):xs)
 
 
 {- makeBlackH rows list
-    Makes specified horizontal row black. 
-    RETURNS: A new candylist with the row blacked out.
-    SIDE EFFECTS: creates a new gamestate with the new list.
-    EXAMPLE: makeBlackV [((1.0,3),"H")] [green, green, green, red, blue, red, red, blue, yellow] == [black, black, black, red, blue, red, red, blue, yellow]
+    Makes specified horizontal row black.
     VARIANT: length list
+    RETURNS: A new candylist with the row blacked out.
+    EXAMPLE: makeBlackV [((1.0,3),"H")] [green, green, green, red, blue, red, red, blue, yellow] == [black, black, black, red, blue, red, red, blue, yellow]
+    
 -}
 
 makeBlackH :: [((Float,Int),String)] -> [Candy] -> [Candy]
@@ -407,7 +422,7 @@ makeBlackH (((startPoint,inRow),"H"):tail)  ((((a,b),int),col):xs) -- = trace ("
 {- moveSquare moveX moveY player
     Moves the players selected square. 
     RETURNS: A new location for the player.
-    SIDE EFFECTS: creates a new gamestate with the new location for squareIndex.
+    SIDE EFFECTS: creates a new gamestate with the new location for squareIndex that is then diplayed by main.
     EXAMPLE: moveSquare 100 0 (Player {squareLoc = (100,100),
                                   squareIndex = 1,                                    ---> 2
                                   playerColor = white,
@@ -455,30 +470,31 @@ moveSquare moveX moveY player = trace ("z' = " ++ show z') $ player { squareLoc 
 {- updateLocationX bank z
     changes the x value of players location 
     RETURNS: a new location
-    SIDE EFFECTS: ???
-    EXAMPLE: ???
+    EXAMPLE: updateLocationX [(((-200,200),1),black), (((-100,200),2),red), (((0,200),3),blue), (((-100,200),4),yellow)] 2 -> 0.0
 -}
+
 updateLocationX :: [Candy] -> Int -> Float
 updateLocationX bank z = fst(fst(fst( bank !! z)))
 
 {- updateLocationY bank z
     changes the y value of players location
     RETURNS: a new location
-    SIDE EFFECTS: ???
-    EXAMPLE: ???
+    EXAMPLE: updateLocationY [(((-200,200),1),black), (((-100,200),2),red), (((0,200),3),blue), (((100,200),4),yellow)] 2 -> 200.0
+
 -}
 updateLocationY :: [Candy] -> Int -> Float
 updateLocationY bank z = snd(fst(fst( bank !! z)))
 
     
 
--- tar 0, lista med colors, candyLocations (boxes (200,-200) [(((200,-200),0),white)]
+-- takes 0, list with colors, candyLocations (boxes (200,-200) [(((200,-200),0),white)]
+
 {- createCandy int colors positions
-    Poulates grid with colored squares.
-    RETURNS: A candylist
-    SIDE EFFECTS: creates a gamestate with the lsit
-    EXAMPLE: createCandy 0 [red, blue, green, blue, blue, pink, yellow, yellow, red] ??? = [red, blue, green, blue, blue, pink, yellow, yellow, red]
+    Populates the grid with colored squares.
     VARIANT: length positions
+    RETURNS: A candylist
+    EXAMPLE: createCandy 0 [red, blue, green, blue, blue, pink, yellow, yellow, red] ??? = [red, blue, green, blue, blue, pink, yellow, yellow, red]
+    
 -}
 createCandy :: Int -> [Color] -> [(Float,Float)] -> [Candy]
 createCandy _ _ [] = []
@@ -489,7 +505,7 @@ createCandy int colors positions =
 
 {- paintCandy list
     takes a candylist and generates colored squares
-    RETURNS: a picture with the colored squares drawn in
+    RETURNS: a picture with the colored squares drawn out.
     VARIANT: length list
 -}
 paintCandy :: [Candy] -> [Picture]
@@ -501,7 +517,7 @@ paintCandy ((((a,b),int),col):xs) = [Color col $ translate a b $ rectangleSolid 
     Computes the coordinates of each created square so the candies line up no matter what size the board is.
     RETURNS: A list of tuples containing the x- and y-coordinates of each candy.
     EXAMPLE: candyLocations 2 ((-200),200) == [((-200),200), ((-100),200), ((-200),100), ((-100),100)]
-    VARIANT: num | a && b
+    VARIANT: num or a && b
 -}
 candyLocations :: Float -> (Float, Float)-> [(Float,Float)]
 candyLocations 0  (a,b)
