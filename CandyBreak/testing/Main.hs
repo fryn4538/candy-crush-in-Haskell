@@ -1,12 +1,7 @@
-module Main(main) where
 import System.IO.Unsafe  -- be careful! 
 import Debug.Trace
 import Graphics.Gloss
---import Graphics.Gloss.Data.Color (makeColor, red)
-import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
---import Graphics.Gloss.Data.ViewPort
---import Control.Exception
 import Graphics.Gloss.Data.Picture
 import System.Random
 import Control.Monad
@@ -20,13 +15,43 @@ type Candy = (((Float,Float),Int),Color)
            -- (Float, Float) is the candy's coordinates
            -- Int is the 'spot' of the candy on the playing field
            -- Color is the candy's color
-{-
- ???
+<<<<<<< HEAD
+         
+=======
+>>>>>>> b112e904b4346b5dd9074c012be8e110071ceea5
+{- Description of every attribute
+
+     squareLoc : The current coordinates of the player, in the form of two floats
+     menuLoc :: The x-coordinate of the player while in gamestate 1. This coordinate increases and decreases when the player moves across the different gameboard-size selections
+     gridSize :: Represents which gameboard size the player chooses at the beginning of the game
+     playerColor :: Represents the color of the player
+     squareIndex :: Represents the current index of the player (squareIndex = 1 means that the player is currently sat on the top left square)
+     candyBank :: Represents the current constellation of candies. In other words, this is a list of every candy on screen, in order
+     moveState :: Either True or False. While true, the player is in a moveState. While in a moveState, the players next move switches two candies (if move is valid)
+     gameState :: Represents what the function render renders on screen. 1 = startScreen, 2 = game, 3 = gameover
+     colorBank :: 10 000 random colors, generated at the start of the game. When new candies are generated after a valid move, their colors are chosen from the first elements of colorBank
+     score :: The players current score. Increases by the number of candies crushed every move. 
+     time :: How much time left until gameover.
+
+  INVARIANTS
+     squareLoc :: Within the borders of the gameboard
+     menuLoc :: y-coordinate never changes
+     gridSize :: Either 5*5, 6*6, 7*7, 8*8, 9*9
+     playerColor :: Either white or violet
+     squareIndex :: Somewhere between 1 and gridsize
+     candyBank :: Length is gridsize
+     moveState :: True or False
+     gameState :: 1, 2 or 3
+     colorBank :: Length never exceeds 10 000
+     score :: >= 0
+     time :: >= 0
+<<<<<<< HEAD
+
+=======
+>>>>>>> b112e904b4346b5dd9074c012be8e110071ceea5
 -}
 data Player = Player
   {  squareLoc :: (Float, Float),
-     menuLoc :: Float,
-     gridSize :: Float,
      playerColor :: Color,
      squareIndex :: Float,
      candyBank :: [Candy],
@@ -34,11 +59,9 @@ data Player = Player
      gameState :: Int,
      colorBank :: [Color],
      score :: Int,
-     time :: Float
+     time :: Int
   } deriving Show
 
--- In order to get random candies we chose a random element from a list.
--- Saved values --
 
 
 
@@ -50,7 +73,7 @@ data Player = Player
    EXAMPLES: boxes -> 9
 -}
 boxes :: Float
-boxes = 9
+boxes = 8
 
 {- boxesInt
    Converts boxes into an Int.
@@ -63,12 +86,17 @@ boxesInt = round boxes
 
 {- main
    A gameloop that updates the game after every move.
-   RETURNS: unit
+   Returns: This function returns all the different values given by its called functions. (Windows, background, etc.)
 -}
 main :: IO ()
-main = if (gameState initState) == 1
-          then play window background fps initStateMenu renderMenu handleKeys (const id)  -- Löst så att rutan inte flyttas med (const id)
-          else play window background fps initStateMenu render handleKeys timer
+main = play
+       window
+       background
+       fps
+       initState
+       render
+       handleKeys
+       timer --(const id) -- Löst så att rutan inte flyttas med (const id)
 ------------------------ Playfunktionens argument ----------------------------------------------
 {- window
    Tells the main function to run in fullscreen.
@@ -102,17 +130,15 @@ fps = 1
    Examples initState -> Player {squareLoc = (-400.0,400.0), playerColor = RGBA 1.0 1.0 1.0 1.0, squareIndex = 1.0, candyBank = [(((100.0,100.0),1),RGBA 0.0 1.0 0.0 1.0)..(((100.0,100.0),81),RGBA 0.0 1.0 0.0 1.0)], moveState = False, gameState = 2, colorBank = [RGBA 1.0 0.0 0.0 1.0..RGBA 1.0 0.0 1.0 1.0], score = 0}
 -}
 initState :: Player
-initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
-                     menuLoc = (-400),
-                     gridSize = 6,
+initState =  Player {squareLoc   = (((-((boxes*50)-50)),((boxes*50)-50))),
                      squareIndex = 1,
                      playerColor = white,
-                     colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
-                     candyBank =  refill (checkRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))),        
-                     moveState = False,
-                     gameState = 2,
-                     score = 0,
-                     time = 120}
+                     colorBank   = (randColorGen (unsafePerformIO (randListGen (10000)))),
+                     candyBank   = refill (checkRows (createCandy 0 (randColorGen (unsafePerformIO (randListGen (boxesInt*boxesInt)))) (candyLocations boxes ((-200),200))) 12) (randColorGen (unsafePerformIO (randListGen (100)))),        
+                     moveState   = False,
+                     gameState   = 1,
+                     score       = 0,
+                     time        = 120}
 
 {- render player
    Generates the grphics of the game.
@@ -121,9 +147,10 @@ initState =  Player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
 --  Draw a candy game state (convert it to a picture).
 render :: Player -> Picture
 render player
-   | (gameState player) == 1 = pictures ([(Color green $ translate (-400) 200 $ text ("Candy Break"))] ++ (startBox 5 (-400) (-200)) ++ (startTxt 5 (-454) (-226)) ++ [menuMarker player])
+   | (gameState player) == 1 = pictures ([(Color green $ translate (-380) 0 $ text ("Candy Break"))] ++ [(Color green $ translate (-260) (-200) $ scale 0.4 0.4 $ text ("Press ENTER to play"))])
    | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)] ++ [Color green $ translate 500 0 $ showTime player])
-   | (gameState player) == 3 = pictures [(Color green $ translate (-600) 0 $ text ("Your score was: " ++ show (score player)))]
+   | (gameState player) == 3 = pictures ([(Color green $ translate (-580) 0 $ text ("Your score was: " ++ show (score player)))] ++ [(Color green $ translate (-340) (-200) $ scale 0.4 0.4 $ text ("Press ENTER to play again"))] ++ [(Color green $ translate (-240) (-300) $ scale 0.4 0.4 $ text ("Press ESC to exit"))])
+   | (gameState player) == 4 = pictures (paintCandy $ testList1)
 
 
 
@@ -131,40 +158,49 @@ render player
 {- HandleKeys Event
      Receives a keystate and performs a functioncall depending on what key is pressed in what way.
      RETURNS: a new gamestate depending on wich key is pressed.
-     Keyup: Returns a gamestate where player position in candyList is changed to be n less.
-     KeyDown: Returns a gamestate where player position in candyList is changed to be n more.
+     Keyup: Returns a gamestate where player position in candyList is changed to be n less where n is the width of the playing field.
+     KeyDown: Returns a gamestate where player position in candyList is changed to be n more where n is the width of the playing field.
      KeyRight: Returns a gamestate where player position in candyList is changed to be 1 more.
      KeyLeft: Returns a gamestate where player position in candyList is changed to be 1 less.
-     SIDE EFFECTS: Updates the gamestate to a new gamestate that is printed out on the screen where various player values may  have changed.
+     SIDE EFFECTS: Updates the gamestate to a new gamestate that is printed out on the screen where the values of various player attributes may have changed depending on the key pressed.
      EXAMPLES: handleKeys (EventKey (Char '2') Down _ _) player == player {gameState = 2}
   -}
+   
 handleKeys :: Event -> Player -> Player
 handleKeys (EventKey (Char '1') Down _ _) player = player {gameState = 1}
 handleKeys (EventKey (Char '2') Down _ _) player = player {gameState = 2}
 handleKeys (EventKey (Char '3') Down _ _) player = player {gameState = 3}
+handleKeys (EventKey (Char '4') Down _ _) player = player {gameState = 4}
 
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
   | (gameState player) == 1 = player
-  | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Up" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | moveState player && (verifyMoveCandy 0 100 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Up")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Up" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Up" (candyBank player)) 0))}
   | otherwise = moveSquare 0 100 player
 
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) player
   | (gameState player) == 1 = player
-  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = ((score player) + countBlack ((moveCandy (squareIndex player) "Down" (candyBank player))) 0)}
+  | moveState player && (verifyMoveCandy 0 (-100) (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Down")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Down" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Down" (candyBank player)) 0))}
   | otherwise = moveSquare 0 (-100) player
 
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) player
-  | (gameState player) == 1 = moveMenu (-200) player
-  | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Left" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | (gameState player) == 1 = player
+  | moveState player && (verifyMoveCandy (-100) 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Left")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Left" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Left" (candyBank player)) 0))}
   | otherwise = moveSquare (-100) 0 player
 
 handleKeys (EventKey (SpecialKey KeyRight) Down _ _) player
-  | (gameState player) == 1 = moveMenu (200) player
-  | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Right" (candyBank player)) (colorBank player), score = (updateScore player)}
+  | (gameState player) == 1 = player
+  | moveState player && (verifyMoveCandy 100 0 (squareIndex player)) && not(verifySwapCandy (squareIndex player) (candyBank player) "Right")  = player { playerColor = white, colorBank = (drop 10 (colorBank player)), moveState = False, candyBank = refill (moveCandy (squareIndex player) "Right" (candyBank player)) (colorBank player), score = ((score player) + (countBlack (moveCandy (squareIndex player) "Right" (candyBank player)) 0))}
   | otherwise = moveSquare 100 0 player
   
 handleKeys (EventKey (SpecialKey KeyEnter) Down _ _) player
-  | (gameState player) == 1 = initState {time = 100}
+  | (gameState player) == 1 || (gameState player) == 3 = player {squareLoc = (((-((boxes*50)-50)),((boxes*50)-50))),
+                                         squareIndex = 1,
+                                         playerColor = white,
+                                          colorBank = (randColorGen (unsafePerformIO (randListGen (10000)))),
+                                          moveState = False,
+                                          gameState = 2,
+                                          score = 0,
+                                          time = 120}
   | moveState player = player { playerColor = white, moveState = False}
   | otherwise = player {playerColor = violet, moveState = True}
   
@@ -189,7 +225,7 @@ verifyMoveCandy moveX moveY index   | mod (floor index) boxesInt == 1 && moveX <
      If a player tries to swap a candy, this function checks wether or not the swap results in at least one row with 3 or more candies of the same type.
      RETURNS: A Boolean, True or False
      EXAMPLES:
-     verifySwapCandy 10 (candyBank player) "Right" == True (This result is given if the moveCandy function finds any rows of 3 or more candies. Otherwise False)
+     verifySwapCandy 10 (candyBank player) "Right" == False (This result is given if the moveCandy function finds any rows of 3 or more candies. Otherwise True)
   -}
                                    
 verifySwapCandy :: Float -> [Candy] -> String -> Bool
@@ -211,12 +247,11 @@ checkRows list n
        | n > 0 =  checkRows (checkHorizontalRows 1 1 0 [] list list) (n-1)
        | otherwise = checkHorizontalRows 1 1 0 [] list list
 
-
+--[((Float,Int),String)] Is a list of tuples containing a startIndex and how many candies come after it. The string tells if the row is vertical or horizontal.
 {-  checkHorizontalRows index startIndex counter listOfRows unchanged candyList
      Checks if there are any candies in a horizontal row and calls checkVerticalRows with all rows found.
      VARIANT: index
      RETURNS: A new list of candies with one row of candies made black.
-     SIDE EFFECTS: updates the gamestate to show the new list with 
      EXAMPLES:
 checkHorizontalRows 1 1 0 [] [green, green, green, red, blue, green, pink, pink, green] [green, green, green, red, blue, green, pink, pink, green] 2 == [black, black, black, red, blue, green, pink, pink, green]
 -}       
@@ -236,7 +271,6 @@ checkHorizontalRows index startIndex counter listOfRows unchanged ((((a,b),candy
      Checks if there are any candies in a vertical row and calls makeBlackV with all rows found in both checkHorizontalRows and checkVerticalRows.
      VARIANT: index
      RETURNS: A new list of candies where the first row of candies that is found is made black.
-     SIDE EFFECTS: updates the gamestate to show the new list with 
      EXAMPLES:
 checkVerticalRows 1 1 0 1 [((1.0,3),"H")] [green, green, green, red, blue, red, pink, pink, green] == [black, black, black, red, blue, green, pink, pink, green] 
   -}
@@ -261,7 +295,6 @@ checkVerticalRows index startIndex counter row listOfRows unchanged
  {- moveCandy index string candyList
      The function swaps the color of a candy with the color of an adjacent candy depending on the value of the given string. And with the help of checkRows figures out if any new rows have appeared.
      RETURNS:  A new list of candies where each row of 3 or more of the same candies have their color set to black.
-     SIDE EFFECTS: creates a new gamestate where 2 candies have switched colors and one or more rows of candies have been blacked out.
      EXAMPLES: moveCandy 5 "Up" [green, blue, green, blue, green, green, pink, pink, green] == [black, black, black, blue, blue, green, pink, pink, green]
   -}
 
@@ -274,8 +307,8 @@ moveCandy index "Down" candyList =  checkRows(moveCandyAux (floor index) (snd(ca
 
 {- moveCandyAux index color color2 direction candyList
      Performs the swap between the colors of two adjacent candies.
-     RETURNS: A new candylist where the color value at index x and y have switched.
-     SIDE EFFECTS: creates a new gamestate where 2 candies have switched colors and one or more rows of candies have been blacked out.
+     RETURNS: A new candylist where the color value at index a and b have switched.
+     VARIANT: length candyList
      EXAMPLES: moveCandyAux 5 green red "Up" [green, blue, green, blue, green, green, pink, pink, green] == [black, black, black, blue, blue, green, pink, pink, green]
   -}
 
@@ -292,11 +325,11 @@ moveCandyAux ind color1 color2 direction ((((a,b),candyIndex),col):xs)
 
 
 
---[([Float],Int)] Is a list of tuples containing a startIndex and how many candies come after it.
+
+
 {- refill list colorBank
    moves blacked out spots to the top and fills them with colors from the colorBank
    RETURNS: A new candylist where all the blacked out spots have been moved to the top and filled with colors
-   SIDE EFFECTS: Creates a new gamestate where all blacked out spots have been moved up and filled with colors
    EXAMPLES: mkAllCol [green, green, yellow, red, blue, pink, black, black, black] colorBank = [pink, red, green, green, green, yellow, red, blue, pink]
 -}
 
@@ -307,21 +340,21 @@ refill list colorBank = refillAux list [] colorBank
 
 {- refillAux list temp colors
      moves blacked out spots to the top and fills them with colors
+     VARIANT: length list
      RETURNS: A new candylist where all the blacked out spots have been moved to the top and filled with colors
-     SIDE EFFECTS: Creates a new gamestate where all blacked out spots have been moved up and filled with colors
      EXAMPLES: refillAux [green, green, yellow, red, blue, pink, black, black, black] [] [pink, blue, blue] = [pink, blue, blue, green, green, yellow, red, blue, pink]
 -}
 
 refillAux :: [Candy] -> [Candy]-> [Color] -> [Candy]
-refillAux [] list _ = list
-refillAux list temp colors
-  | snd (head list) == black =  refillAux (checkRows (recolor (moveBlack (checkRows (temp ++ list) 1)) colors) 1) [] (tail colors)
-  | otherwise = refillAux (tail list) (temp ++ [(head list)]) colors
+refillAux [] baseListlist _ = baseList
+refillAux list baseList colors
+  | snd (head list) == black =  refillAux (checkRows (recolor (moveBlack (checkRows (baseList ++ list) 1)) colors) 1) [] (tail colors)
+  | otherwise = refillAux (tail list) (baseList ++ [(head list)]) colors
 
 {- recolor list colors
      recolors all blacked out candies
-     RETURNS: A new candylist where all the blacked out spots have been filled with colors
-     SIDE EFFECTS: Creates a new gamestate where all blacked out spots have been filled with colors
+     VARIANT: length list
+     RETURNS: A new candylist where all the blacked out spots have been filled with colored candies.
      EXAMPLES: recolor [black, black, black, red, blue, pink, red, green, red] colorBank = [pink, blue, blue, red, blue, pink, red, green, red]
 -}
 
@@ -333,8 +366,7 @@ recolor ((((a,b),int),col):xs) (c:cs)
 
 {- moveBlack list
     Calls moveBlackAux.
-    RETURNS: A new candylist with all black squares moved to the top.              .
-    SIDE EFFECTS: creates a new gamestate with the new list.
+    RETURNS: A new candylist with all black squares moved to the top row as far as possible.              .
     EXAMPLE: moveBlack [red, green, pink, black, black, black, blue, blue, yellow] = [black, black, black, red, green, pink, blue, blue, yellow]
 -}
 
@@ -343,23 +375,23 @@ moveBlack list = (moveBlackAux list (boxesInt) (boxesInt + 1))
 
 {- moveBlackAux list n m
     Moves black squares to the top
-    RETURNS: A new candylist with all black squares moved to the top.              .
-    SIDE EFFECTS: creates a new gamestate with the new list.
-    EXAMPLE: moveBlackAux 3 4 [red, green, pink, black, black, black, blue, blue, yellow] = [black, black, black, red, green, pink, blue, blue, yellow]
     VARIANT: n
+    RETURNS: A new candylist with all black squares moved to the top row as far as possible.              .
+    EXAMPLE: moveBlackAux 3 4 [red, green, pink, black, black, black, blue, blue, yellow] = [black, black, black, red, green, pink, blue, blue, yellow]
+    
 -}
 moveBlackAux :: [Candy] -> Int -> Int -> [Candy]
 moveBlackAux list n m
   | n <= 0 =  list
   | m > ((boxesInt * boxesInt)) = moveBlackAux list (n-1) (boxesInt + 1)
-  | (snd (list !! (m-1))) == black =  moveBlackAux (moveCandy (fromIntegral m) "Up" list) n (m+1)
-  | otherwise = moveBlackAux list n (m+1)
+  | (snd (list !! (m-1))) == black = trace ("m" ++ show m ++ " n" ++ show n) $ moveBlackAux (moveCandy (fromIntegral m) "Up" list) n (m+1)
+  | otherwise = trace ("m" ++ show m ++ " n" ++ show n) $  moveBlackAux list n (m+1)
 {- makeBlackV rows counter list
-    Makes specified vertical row black. 
-    RETURNS: A new candylist with the row blacked out.
-    SIDE EFFECTS: creates a new gamestate with the new list.
-    EXAMPLE: makeBlackV [((1.0,3),"V")] 0 [red, green, pink, red, blue, red, red, blue, yellow] == [black, green, pink, black, blue, red, black, blue, yellow]
+    Makes specified vertical row black.
     VARIANT: (length list)
+    RETURNS: A new candylist with the row blacked out.
+    EXAMPLE: makeBlackV [((1.0,3),"V")] 0 [red, green, pink, red, blue, red, red, blue, yellow] == [black, green, pink, black, blue, red, black, blue, yellow]
+   
 -}
 makeBlackV :: [((Float,Int),String)] -> Int -> [Candy] -> [Candy]
 makeBlackV _ _ [] = []
@@ -372,11 +404,11 @@ makeBlackV (((startPoint,inRow),"V"):tail) counter ((((a,b),int),col):xs)
 
 
 {- makeBlackH rows list
-    Makes specified horizontal row black. 
-    RETURNS: A new candylist with the row blacked out.
-    SIDE EFFECTS: creates a new gamestate with the new list.
-    EXAMPLE: makeBlackV [((1.0,3),"H")] [green, green, green, red, blue, red, red, blue, yellow] == [black, black, black, red, blue, red, red, blue, yellow]
+    Makes specified horizontal row black.
     VARIANT: length list
+    RETURNS: A new candylist with the row blacked out.
+    EXAMPLE: makeBlackV [((1.0,3),"H")] [green, green, green, red, blue, red, red, blue, yellow] == [black, black, black, red, blue, red, red, blue, yellow]
+    
 -}
 
 makeBlackH :: [((Float,Int),String)] -> [Candy] -> [Candy]
@@ -395,7 +427,7 @@ makeBlackH (((startPoint,inRow),"H"):tail)  ((((a,b),int),col):xs) -- = trace ("
 {- moveSquare moveX moveY player
     Moves the players selected square. 
     RETURNS: A new location for the player.
-    SIDE EFFECTS: creates a new gamestate with the new location for squareIndex.
+    SIDE EFFECTS: creates a new gamestate with the new location for squareIndex that is then diplayed by main.
     EXAMPLE: moveSquare 100 0 (Player {squareLoc = (100,100),
                                   squareIndex = 1,                                    ---> 2
                                   playerColor = white,
@@ -443,30 +475,31 @@ moveSquare moveX moveY player = trace ("z' = " ++ show z') $ player { squareLoc 
 {- updateLocationX bank z
     changes the x value of players location 
     RETURNS: a new location
-    SIDE EFFECTS: ???
-    EXAMPLE: ???
+    EXAMPLE: updateLocationX [(((-200,200),1),black), (((-100,200),2),red), (((0,200),3),blue), (((-100,200),4),yellow)] 2 -> 0.0
 -}
+
 updateLocationX :: [Candy] -> Int -> Float
 updateLocationX bank z = fst(fst(fst( bank !! z)))
 
 {- updateLocationY bank z
     changes the y value of players location
     RETURNS: a new location
-    SIDE EFFECTS: ???
-    EXAMPLE: ???
+    EXAMPLE: updateLocationY [(((-200,200),1),black), (((-100,200),2),red), (((0,200),3),blue), (((100,200),4),yellow)] 2 -> 200.0
+
 -}
 updateLocationY :: [Candy] -> Int -> Float
 updateLocationY bank z = snd(fst(fst( bank !! z)))
 
     
 
--- tar 0, lista med colors, candyLocations (boxes (200,-200) [(((200,-200),0),white)]
+-- takes 0, list with colors, candyLocations (boxes (200,-200) [(((200,-200),0),white)]
+
 {- createCandy int colors positions
-    Poulates grid with colored squares.
-    RETURNS: A candylist
-    SIDE EFFECTS: creates a gamestate with the lsit
-    EXAMPLE: createCandy 0 [red, blue, green, blue, blue, pink, yellow, yellow, red] ??? = [red, blue, green, blue, blue, pink, yellow, yellow, red]
+    Populates the grid with colored squares.
     VARIANT: length positions
+    RETURNS: A candylist
+    EXAMPLE: createCandy 0 [red, blue, green, blue, blue, pink, yellow, yellow, red] ??? = [red, blue, green, blue, blue, pink, yellow, yellow, red]
+    
 -}
 createCandy :: Int -> [Color] -> [(Float,Float)] -> [Candy]
 createCandy _ _ [] = []
@@ -477,7 +510,7 @@ createCandy int colors positions =
 
 {- paintCandy list
     takes a candylist and generates colored squares
-    RETURNS: a picture with the colored squares drawn in
+    RETURNS: a picture with the colored squares drawn out.
     VARIANT: length list
 -}
 paintCandy :: [Candy] -> [Picture]
@@ -489,11 +522,11 @@ paintCandy ((((a,b),int),col):xs) = [Color col $ translate a b $ rectangleSolid 
     Computes the coordinates of each created square so the candies line up no matter what size the board is.
     RETURNS: A list of tuples containing the x- and y-coordinates of each candy.
     EXAMPLE: candyLocations 2 ((-200),200) == [((-200),200), ((-100),200), ((-200),100), ((-100),100)]
-    VARIANT: num | a && b
+    VARIANT: num or a && b
 -}
 candyLocations :: Float -> (Float, Float)-> [(Float,Float)]
 candyLocations 0  (a,b)
-  | a > 200 && b < (-((boxes*100)-400)) = []
+  | a > 350 && b < (-((boxes*100)-400)) = []
   | otherwise = candyLocations boxes ((-200), b-100)
 candyLocations num (a,b) = [(a-(((boxes*100)-500) / 2),b+(((boxes*100)-500) / 2))] ++ candyLocations (num-1) (a+100,b)
 
@@ -541,7 +574,7 @@ randColorGen list = [getColor (head list)] ++ randColorGen (tail list)
 getColor :: Int -> Color
 getColor n | n == 1 = red
            | n == 2 = white
-           | n == 3 = blue
+           | n == 3 = (greyN 0.2)
            | n == 4 = dark (dark violet)
            | n == 5 = rose
            | n == 6 = dark green
@@ -609,111 +642,100 @@ scoreDisp player = text (show (score player))
 updateScore :: Player -> Int
 updateScore player = (score player) + 1
 
+{- timer num player
+   A countdown timer when the player is in the game. When the countdown hits 0 the game is over.
+   Pre: True
+   RETURNS: an updated player with the time-attribute equal to 1 less than before the function was called.
+   VARIANT: num
+   EXAMPLES: timer 1 (Player {squareLoc = (100,100), squareIndex = 1, playerColor = white, colorBank = [],candyBank = [], moveState = False, gameState = 2, score = 0, time = 120})
+             ->
+             Player {squareLoc = (100.0,100.0), playerColor = RGBA 1.0 1.0 1.0 1.0, squareIndex = 1.0, candyBank = [], moveState = False, gameState = 2, colorBank = [], score = 0, time = 119}
+-}
 timer :: Float -> Player -> Player
 timer num player
   | (gameState player == 1) || (gameState player == 3) = player
   | (time player) <= 0 = player {gameState = 3}
   | otherwise = player {time = ((time player)-1)}
 
-
+{- showTime player
+   Converts time attribute in Player to a Picture.
+   PRE: True
+   RETURNS: the time attribute in player as a Picture.
+   EXAMPLES: showTime (Player {squareLoc   = (100,100), squareIndex = 1, playerColor = white, colorBank = [],candyBank = [], moveState = False, gameState = 1, score = 0, time = 120}) -> Text "120"
+-}
 showTime :: Player -> Picture
 showTime player = text (show (time player))
 
-startBox :: Int -> Float -> Float -> [Picture]
-startBox 0 _ _ = []
-startBox n x y =  [Color green $ translate x y $ rectangleSolid 150 100] ++  startBox (n-1) (x+200) (y)
-
-startTxt :: Int -> Float -> Float -> [Picture]
-startTxt 9 x y = [Color black $ translate x y $ scale 0.5 0.5 $ text ("9x9")]
-startTxt n x y = [Color black $ translate x y $ scale 0.5 0.5 $ text ((show n) ++ "x" ++ (show n))] ++ startTxt (n+1) (x+200) y
-
-menuMarker :: Player -> Picture
-menuMarker player = (Color white $ translate (menuLoc player) (-200) $ lineLoop $ rectanglePath 150 100)
-
+{- countBlack list n
+   Counts the amount of black candies in a list of candies.
+   PRE: countBlack is called with n = 0.
+   RETURNS: n when when every element in list has been checkes.
+   VARIANT: list
+   EXAMPLES: countBlack [[(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),black),(((-50.0,250.0),12),black),(((50.0,250.0),13),black),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow)] 0 -> 3 
+-}
 countBlack :: [Candy] -> Int -> Int
 countBlack [] n = n
 countBlack (x:xs) n
   | snd x == black = countBlack xs (n+1)
   | otherwise = countBlack xs n
 
-moveMenu :: Float
-            -> Player -- The previous game state
-            -> Player -- A new game state with an updated square position
-moveMenu moveX player = player {menuLoc = x', gridSize = grid'}
-  where
-    -- Old locations and velocities.
-    grid = gridSize player
-    x = menuLoc player
-    -- New locations. -- Nu kan man inte gå ut ur fönstret.
-    x' | x >= 400 && moveX >= 0 = x
-       | x >= 400 && moveX < 0 = x - 200
-       | x <= (-400) && moveX <= 0 = x
-       | x <= (-400) && moveX > 0 = x + 200
-       | otherwise = x + (moveX)
 
-    grid'| grid >= 9 && moveX >= 0 = grid
-         | x >= 9 && moveX < 0 = grid - 1
-         | x <= 5 && moveX <= 0 = grid
-         | x <= 5 && moveX > 0 = grid + 1
-         | otherwise = grid - ((moveX)/(-1*moveX))
 -----------------------------------------------------------------------------------------------------------------------
 
-rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test27, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test38, test39, test40, test41]
+rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test38, test39, test40]
 
-test1 = TestCase $ assertEqual "boxes" 5 (boxes)
-test2 = TestCase $ assertEqual "boxesInt" 5 (boxesInt)
+test1 = TestCase $ assertEqual "boxes" 8 (boxes)
+test2 = TestCase $ assertEqual "boxesInt" 8 (boxesInt)
 test3 = TestCase $ assertEqual "window" FullScreen (window)
 test4 = TestCase $ assertEqual "background" black (background)
 test5 = TestCase $ assertEqual "fps" 1 (fps)
-
 test6 = TestCase $ assertEqual "paintCandy1" ([Color black (Translate 100.0 100.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)]))]) (paintCandy [(((100,100),1),black)])
 test7 = TestCase $ assertEqual "paintCandy2" ([Color (black) (Translate 100.0 100.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)])),Color (red) (Translate 100.0 0.0 (Polygon [(-25.0,-25.0),(-25.0,25.0),(25.0,25.0),(25.0,-25.0)]))]) (paintCandy [(((100,100),1),black),(((100,0),2),red)])
-
-test8 =  TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationX testList1 5)
-test9 =  TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationX testList1 0)
-test10 = TestCase $ assertEqual "updateLocationX" (-200.0) (updateLocationY testList1 ((length testList1)-1))
+test8 =  TestCase $ assertEqual "updateLocationX" (150.0) (updateLocationX testList1 5)
+test9 =  TestCase $ assertEqual "updateLocationX" (-350.0) (updateLocationX testList1 0)
+test10 = TestCase $ assertEqual "updateLocationX" (350.0) (updateLocationX testList1 ((length testList1)-1))
 test11 = TestCase $ assertEqual "VerifyDownMove" False (verifyMoveCandy 0 (-100) (boxes*boxes))
 test12 = TestCase $ assertEqual "VerifyRightMove" True (verifyMoveCandy 100 0 (3))
-test13 = TestCase $ assertEqual "VerifySwapCandy" False (verifySwapCandy 1 testList1 "Right" )
-test14 = TestCase $ assertEqual "VerifySwapCandy" True (verifySwapCandy 2 testList1 "Right" )
-test15 = TestCase $ assertEqual "checkRows" testList1 (checkRows testList 1 )
+test13 = TestCase $ assertEqual "VerifySwapCandy" True (verifySwapCandy 3 testList1 "Right" )
+test14 = TestCase $ assertEqual "VerifySwapCandy" False (verifySwapCandy 11 testList1 "Left" )
+test15 = TestCase $ assertEqual "checkRows" testList1 (checkRows testList1 1 )
 test16 = TestCase $ assertEqual "checkRows" testList5 (checkRows testList2 1 )
 test17 = TestCase $ assertEqual "checkHorizontalRows" testList3 (checkHorizontalRows 1 1 0 [] testList6 testList6 )
 test18 = TestCase $ assertEqual "checkVerticalRows" testList4 (checkVerticalRows 1 1 0 1 [] testList2 )
-test19 = TestCase $ assertEqual "refill"  testList8 (refill testList3 [green, red, white, white, red])
-test20 = TestCase $ assertEqual "refillAux"  testList8 (refillAux testList3 [] [green, red, white, white, red])
-test21 = TestCase $ assertEqual "recolor"  testList8 (recolor testList3 [green, red, white, white, red])
+test19 = TestCase $ assertEqual "refill"  testList8 (refill testList3 [dark green, red, white, white])
+test20 = TestCase $ assertEqual "refillAux"  testList8 (refillAux testList3 [] [dark green, red, white, white])
+test21 = TestCase $ assertEqual "recolor"  testList8 (recolor testList3 [dark green, red, white, white, red])
+-- klara
 test22 = TestCase $ assertEqual "updateLocationY1" (100.0) (updateLocationY testList 8)
 test23 = TestCase $ assertEqual "updateLocationY2" (-200.0) (updateLocationY testList ((length testList)-1))
 test24 = TestCase $ assertEqual "updateLocationY3" (200.0) (updateLocationY testList 0)
 test25 = TestCase $ assertEqual "moveBlack" testList10 (moveBlack testList9)
-test26 = TestCase $ assertEqual "moveBlack" testList10 (moveBlackAux testList9 5 (6))
-test27 = TestCase $ assertEqual "for moveBlackAux testListBlack 1 2 ," ([(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),black),(((100.0,200.0),4),black),(((200.0,200.0),5),black),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),green),(((100.0,100.0),9),green),(((200.0,100.0),10),red),(((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]) (moveBlackAux testListBlack 1 2) 
+test26 = TestCase $ assertEqual "moveBlack" testList10 (moveBlackAux testList9 8 9)
 
 -- MoveSquare cant be tested since it requires a complete playing field of at least 5*5. When that criteria is met the output is way too big to test.
 
-test28 = TestCase $ assertEqual "for createCandy [1,2,3] ," ([(((1.0,2.0),5),red),(((3.0,4.0),6),red),(((5.0,6.0),7),blue),(((7.0,8.0),8),blue)]) (createCandy 4 [red,red,blue,blue] [(1,2),(3,4),(5,6),(7,8)])
-test29 = TestCase $ assertEqual "for createCandy [1,2,3] ," ([(((1.0,2.0),5),white),(((3.0,4.0),6),white),(((5.0,6.0),7),blue),(((7.0,8.0),8),blue)]) (createCandy 4 [white,white,blue,blue] [(1,2),(3,4),(5,6),(7,8)])
+test27 = TestCase $ assertEqual "for createCandy [1,2,3] ," ([(((1.0,2.0),5),red),(((3.0,4.0),6),red),(((5.0,6.0),7),blue),(((7.0,8.0),8),blue)]) (createCandy 4 [red,red,blue,blue] [(1,2),(3,4),(5,6),(7,8)])
+test28 = TestCase $ assertEqual "for createCandy [1,2,3] ," ([(((1.0,2.0),5),white),(((3.0,4.0),6),white),(((5.0,6.0),7),blue),(((7.0,8.0),8),blue)]) (createCandy 4 [white,white,blue,blue] [(1,2),(3,4),(5,6),(7,8)])
 
-test30 = TestCase $ assertEqual "for candyLocations 5 ((-200),200) ," [(-200.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (candyLocations 1 ((-200),200))
+test29 = TestCase $ assertEqual "for candyLocations 8 ((-200),200) ," [(-350.0,350.0),(-250.0,350.0),(-150.0,350.0),(-50.0,350.0),(50.0,350.0),(150.0,350.0),(250.0,350.0),(350.0,350.0),(-350.0,250.0),(-250.0,250.0),(-150.0,250.0),(-50.0,250.0),(50.0,250.0),(150.0,250.0),(250.0,250.0),(350.0,250.0),(-350.0,150.0),(-250.0,150.0),(-150.0,150.0),(-50.0,150.0),(50.0,150.0),(150.0,150.0),(250.0,150.0),(350.0,150.0),(-350.0,50.0),(-250.0,50.0),(-150.0,50.0),(-50.0,50.0),(50.0,50.0),(150.0,50.0),(250.0,50.0),(350.0,50.0),(-350.0,-50.0),(-250.0,-50.0),(-150.0,-50.0),(-50.0,-50.0),(50.0,-50.0),(150.0,-50.0),(250.0,-50.0),(350.0,-50.0),(-350.0,-150.0),(-250.0,-150.0),(-150.0,-150.0),(-50.0,-150.0),(50.0,-150.0),(150.0,-150.0),(250.0,-150.0),(350.0,-150.0),(-350.0,-250.0),(-250.0,-250.0),(-150.0,-250.0),(-50.0,-250.0),(50.0,-250.0),(150.0,-250.0),(250.0,-250.0),(350.0,-250.0),(-350.0,-350.0),(-250.0,-350.0),(-150.0,-350.0),(-50.0,-350.0),(50.0,-350.0),(150.0,-350.0),(250.0,-350.0),(350.0,-350.0)] (candyLocations 8 ((-200),200))
 
-test31 = TestCase $ assertEqual "for mkMarker initState (0,0) ," (Pictures [Translate 0.0 0.0 (Color (white) (Line [(-50.0,-50.0),(-50.0,50.0),(50.0,50.0),(50.0,-50.0),(-50.0,-50.0)]))])    (mkMarker initState (0,0))
-test32 = TestCase $ assertEqual "for mkMarker initState (0,0) ," (Pictures [Translate 100.0 0.0 (Color (white) (Line [(-50.0,-50.0),(-50.0,50.0),(50.0,50.0),(50.0,-50.0),(-50.0,-50.0)]))])    (mkMarker initState (100,0))
+test30 = TestCase $ assertEqual "for mkMarker initState (0,0) ," (Pictures [Translate 0.0 0.0 (Color (white) (Line [(-50.0,-50.0),(-50.0,50.0),(50.0,50.0),(50.0,-50.0),(-50.0,-50.0)]))])    (mkMarker initState (0,0))
+test31 = TestCase $ assertEqual "for mkMarker initState (0,0) ," (Pictures [Translate 100.0 0.0 (Color (white) (Line [(-50.0,-50.0),(-50.0,50.0),(50.0,50.0),(50.0,-50.0),(-50.0,-50.0)]))])    (mkMarker initState (100,0))
 
-test33 = TestCase $ assertEqual "for randColorGen [1,2,3] ," [red, white, blue] (randColorGen [1,2,3])
-test34 = TestCase $ assertEqual "for randColorGen [4,5,6] ," [dark(dark violet), rose, dark green] (randColorGen [4,5,6])
+test32 = TestCase $ assertEqual "for randColorGen [1,2,3] ," [red, white, (greyN 0.2)] (randColorGen [1,2,3])
+test33 = TestCase $ assertEqual "for randColorGen [4,5,6] ," [dark (dark violet), rose, dark green] (randColorGen [4,5,6])
 
-test35 = TestCase $ assertEqual "for getColor 3 ," (blue) (getColor 3)
-test36 = TestCase $ assertEqual "for getColor 2 ," (white) (getColor 2)
-test37 = TestCase $ assertEqual "for getColor 1 ," (red) (getColor 1)
+test34 = TestCase $ assertEqual "for getColor 3 ," (greyN 0.2) (getColor 3)
+test35 = TestCase $ assertEqual "for getColor 2 ," (white) (getColor 2)
+test36 = TestCase $ assertEqual "for getColor 1 ," (red) (getColor 1)
 
-test38 = TestCase $ assertEqual "for squareLocations 5 ((-200),200)," [(-400.0,400.0),(-300.0,400.0),(-200.0,400.0),(-100.0,400.0),(0.0,400.0),(-200.0,300.0),(-100.0,300.0),(0.0,300.0),(100.0,300.0),(200.0,300.0),(-200.0,200.0),(-100.0,200.0),(0.0,200.0),(100.0,200.0),(200.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 5 ((-400),400))
+test37 = TestCase $ assertEqual "for squareLocations 8 ((-200),200)," [(-350.0,350.0),(-250.0,350.0),(-150.0,350.0),(-50.0,350.0),(50.0,350.0),(150.0,350.0),(250.0,350.0),(350.0,350.0),(-350.0,250.0),(-250.0,250.0),(-150.0,250.0),(-50.0,250.0),(50.0,250.0),(150.0,250.0),(250.0,250.0),(350.0,250.0),(-350.0,150.0),(-250.0,150.0),(-150.0,150.0),(-50.0,150.0),(50.0,150.0),(150.0,150.0),(250.0,150.0),(350.0,150.0),(-350.0,50.0),(-250.0,50.0),(-150.0,50.0),(-50.0,50.0),(50.0,50.0),(150.0,50.0),(250.0,50.0),(350.0,50.0),(-350.0,-50.0),(-250.0,-50.0),(-150.0,-50.0),(-50.0,-50.0),(50.0,-50.0),(150.0,-50.0),(250.0,-50.0),(350.0,-50.0),(-350.0,-150.0),(-250.0,-150.0),(-150.0,-150.0),(-50.0,-150.0),(50.0,-150.0),(150.0,-150.0),(250.0,-150.0),(350.0,-150.0),(-350.0,-250.0),(-250.0,-250.0),(-150.0,-250.0),(-50.0,-250.0),(50.0,-250.0),(150.0,-250.0),(250.0,-250.0),(350.0,-250.0),(-350.0,-350.0),(-250.0,-350.0),(-150.0,-350.0),(-50.0,-350.0),(50.0,-350.0),(150.0,-350.0),(250.0,-350.0),(350.0,-350.0)] (squareLocations 8 ((-200),200))
 
-test39 = TestCase $ assertEqual "for squareLocations 4 ((-200),100)," [(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 4 ((-200),100))
+test38 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore initState)
 
-test40 = TestCase $ assertEqual "for squareLocations 5 ((-400),200)," [(-400.0,200.0),(-300.0,200.0),(-200.0,200.0),(-100.0,200.0),(0.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 5 ((-400),200))
+test39 = TestCase $ assertEqual "showTime" (Text "119") (showTime (Player {squareLoc = (100.0,100.0), playerColor = white, squareIndex = 1.0, candyBank = [], moveState = False, gameState = 2, colorBank = [], score = 0, time = 119}))
 
-test41 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore initState)
+test40 = TestCase $ assertEqual "countBlack" 3 (countBlack testList9 0)
 
 
 
@@ -721,43 +743,24 @@ test41 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore ini
 testlist = testList :: [Candy]
 testList = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
 
-testlistBlack = testListBlack :: [Candy]
-testListBlack = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),black),(((100.0,100.0),9),black),(((200.0,100.0),10),black),(((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList1 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),red),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
-testList1 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList2 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),red),(((-150.0,250.0),11),(greyN 0.2)),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
+testList3 = [(((-350.0,350.0),1),black),(((-250.0,350.0),2),black),(((-150.0,350.0),3),black)]++ (drop 3 testList6)
 
-testList2 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),green),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),green),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList4 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),black),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),black),(((-150.0,250.0),11),(greyN 0.2)),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),black),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
-testList3 = [(((-200.0,200.0),1),black),(((-100.0,200.0),2),black),(((0.0,200.0),3),black),(((100.0,200.0),4),black)]++ (drop 4 testList7)
-
-testList4 = [(((-200.0,200.0),1),black),(((-100.0,200.0),2),green),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),black),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),black),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
-
-testList5 = [(((-200.0,200.0),1),black),(((-100.0,200.0),2),black),(((0.0,200.0),3),black),(((100.0,200.0),4),black),(((200.0,200.0),5),red),(((-200.0,100.0),6),black),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),black),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
-
-testList6 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),green),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),red),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList5 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),black),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),black),(((-150.0,250.0),11),(greyN 0.2)),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),black),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
 
-testList7 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),green),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),red),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList6 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),dark (dark violet)),(((-150.0,350.0),3),dark (dark violet)),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),red),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
-testList8 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),red),(((0.0,200.0),3),white),(((100.0,200.0),4),white),(((200.0,200.0),5),red),(((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),white),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),(((-200.0,0.0),11),red),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),(((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),(((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList8 = [(((-350.0,350.0),1), dark green),(((-250.0,350.0),2),red),(((-150.0,350.0),3),white),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),red),(((-50.0,250.0),12),yellow),(((50.0,250.0),13),white),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 
-testList9 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),
-             (((-200.0,100.0),6),green),(((-100.0,100.0),7),black),(((0.0,100.0),8),black),(((100.0,100.0),9),black),(((200.0,100.0),10),blue),
-             (((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),
-             (((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),
-             (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
-
-testList10 = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),black),(((0.0,200.0),3),black),(((100.0,200.0),4),black),(((200.0,200.0),5),red),
-              (((-200.0,100.0),6),green),(((-100.0,100.0),7),white),(((0.0,100.0),8),green),(((100.0,100.0),9),green),(((200.0,100.0),10),blue),
-              (((-200.0,0.0),11),white),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),
-              (((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),white),(((200.0,-100.0),20),white),
-              (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+testList9 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),yellow),(((-50.0,350.0),4),rose),(((50.0,350.0),5),(greyN 0.2)),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),black),(((-50.0,250.0),12),black),(((50.0,250.0),13),black),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
+  
+testList10 = [(((-350.0,350.0),1),dark (dark violet)),(((-250.0,350.0),2),red),(((-150.0,350.0),3),black),(((-50.0,350.0),4),black),(((50.0,350.0),5),black),(((150.0,350.0),6),dark green),(((250.0,350.0),7),red),(((350.0,350.0),8),dark (dark violet)),(((-350.0,250.0),9),rose),(((-250.0,250.0),10),(greyN 0.2)),(((-150.0,250.0),11),yellow),(((-50.0,250.0),12),rose),(((50.0,250.0),13),(greyN 0.2)),(((150.0,250.0),14),dark (dark violet)),(((250.0,250.0),15),yellow),(((350.0,250.0),16),white),(((-350.0,150.0),17),(greyN 0.2)),(((-250.0,150.0),18),red),(((-150.0,150.0),19),(greyN 0.2)),(((-50.0,150.0),20),white),(((50.0,150.0),21),yellow),(((150.0,150.0),22),red),(((250.0,150.0),23),dark (dark violet)),(((350.0,150.0),24),dark green),(((-350.0,50.0),25),rose),(((-250.0,50.0),26),(greyN 0.2)),(((-150.0,50.0),27),yellow),(((-50.0,50.0),28),(greyN 0.2)),(((50.0,50.0),29),dark green),(((150.0,50.0),30),white),(((250.0,50.0),31),red),(((350.0,50.0),32),rose),(((-350.0,-50.0),33),white),(((-250.0,-50.0),34),dark (dark violet)),(((-150.0,-50.0),35),red),(((-50.0,-50.0),36),dark (dark violet)),(((50.0,-50.0),37),red),(((150.0,-50.0),38),dark (dark violet)),(((250.0,-50.0),39),yellow),(((350.0,-50.0),40),dark green),(((-350.0,-150.0),41),(greyN 0.2)),(((-250.0,-150.0),42),red),(((-150.0,-150.0),43),(greyN 0.2)),(((-50.0,-150.0),44),red),(((50.0,-150.0),45),dark (dark violet)),(((150.0,-150.0),46),white),(((250.0,-150.0),47),dark (dark violet)),(((350.0,-150.0),48),dark green),(((-350.0,-250.0),49),red),(((-250.0,-250.0),50),(greyN 0.2)),(((-150.0,-250.0),51),dark (dark violet)),(((-50.0,-250.0),52),white),(((50.0,-250.0),53),dark (dark violet)),(((150.0,-250.0),54),white),(((250.0,-250.0),55),dark green),(((350.0,-250.0),56),white),(((-350.0,-350.0),57),dark (dark violet)),(((-250.0,-350.0),58),(greyN 0.2)),(((-150.0,-350.0),59),red),(((-50.0,-350.0),60),dark (dark violet)),(((50.0,-350.0),61),dark green),(((150.0,-350.0),62),dark green),(((250.0,-350.0),63),red),(((350.0,-350.0),64),dark green)]
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
-testtest :: [Candy]
-testtest = [(((-200.0,200.0),1),green),(((-100.0,200.0),2),white),(((0.0,200.0),3),green),(((100.0,200.0),4),green),(((200.0,200.0),5),red),
-            (((-200.0,100.0),6),green),(((-100.0,100.0),7),blue),(((0.0,100.0),8),blue),(((100.0,100.0),9),white),(((200.0,100.0),10),blue),
-            (((-200.0,0.0),11),green),(((-100.0,0.0),12),red),(((0.0,0.0),13),green),(((100.0,0.0),14),green),(((200.0,0.0),15),white),
-            (((-200.0,-100.0),16),blue),(((-100.0,-100.0),17),red),(((0.0,-100.0),18),red),(((100.0,-100.0),19),red),(((200.0,-100.0),20),white),
-            (((-200.0,-200.0),21),blue),(((-100.0,-200.0),22),blue),(((0.0,-200.0),23),white),(((100.0,-200.0),24),blue),(((200.0,-200.0),25),blue)]
+

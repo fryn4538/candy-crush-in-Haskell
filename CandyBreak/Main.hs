@@ -1,3 +1,4 @@
+
 import System.IO.Unsafe  -- be careful! 
 import Debug.Trace
 import Graphics.Gloss
@@ -9,16 +10,13 @@ import Test.HUnit
 
 
 {-
- ???
+ -- (Float, Float) is the candy's coordinates
+ -- Int is the 'spot' of the candy on the playing field
+ -- Color is the candy's color
 -}
 type Candy = (((Float,Float),Int),Color)
-           -- (Float, Float) is the candy's coordinates
-           -- Int is the 'spot' of the candy on the playing field
-           -- Color is the candy's color
-<<<<<<< HEAD
+          
          
-=======
->>>>>>> b112e904b4346b5dd9074c012be8e110071ceea5
 {- Description of every attribute
 
      squareLoc : The current coordinates of the player, in the form of two floats
@@ -45,10 +43,7 @@ type Candy = (((Float,Float),Int),Color)
      colorBank :: Length never exceeds 10 000
      score :: >= 0
      time :: >= 0
-<<<<<<< HEAD
 
-=======
->>>>>>> b112e904b4346b5dd9074c012be8e110071ceea5
 -}
 data Player = Player
   {  squareLoc :: (Float, Float),
@@ -239,7 +234,6 @@ verifySwapCandy index candyList "Left" = moveCandy index "Left" candyList  == (m
      Recursively calls the function checkHorizontalRows n times in order to make all possible created rows black
      PRE: n > -1
      RETURNS: a new list of Candy where candies in rows of 3 or more have their colors changed to black.
-     SIDE EFFECTS: Updates the gamestate to show the new list with black candies.
      EXAMPLES: checkRows [green, green, green, red, blue, green, pink, pink, green] 2 == [black, black, black, red, blue, black, pink, pink, black] 
   -}
 checkRows :: [Candy] -> Int -> [Candy]
@@ -346,7 +340,7 @@ refill list colorBank = refillAux list [] colorBank
 -}
 
 refillAux :: [Candy] -> [Candy]-> [Color] -> [Candy]
-refillAux [] baseListlist _ = baseList
+refillAux [] baseList _ = baseList
 refillAux list baseList colors
   | snd (head list) == black =  refillAux (checkRows (recolor (moveBlack (checkRows (baseList ++ list) 1)) colors) 1) [] (tail colors)
   | otherwise = refillAux (tail list) (baseList ++ [(head list)]) colors
@@ -443,8 +437,6 @@ moveSquare :: Float
             -> Player -- A new game state with an updated square position
 moveSquare moveX moveY player = trace ("z' = " ++ show z') $ player { squareLoc = (x', y'), squareIndex =  z', moveState = False, playerColor = white}
   where
-    -- Old locations and velocities.
-    
     (x, y) = squareLoc player
     z = squareIndex player
     bank = candyBank player
@@ -457,15 +449,14 @@ moveSquare moveX moveY player = trace ("z' = " ++ show z') $ player { squareLoc 
        | moveX /= 0 = (z + (moveX/100))
        | moveY /= 0 = (z + (((moveY/100)*boxes))*(-1))
        | otherwise = z
-       
-    -- New locations. -- Nu kan man inte gå ut ur fönstret.
+
     x' | x >= ((boxes * 50)-50) && moveX >= 0 = x
        | x >= ((boxes * 50)-50) && moveX < 0 = updateLocationX bank (floor(z')-1)
        | x <= (-((boxes * 50)-50)) && moveX <= 0 = x
        | x <= (-((boxes * 50)-50)) && moveX > 0 = updateLocationX  bank (floor(z')-1)
        | otherwise = updateLocationX bank (floor(z')-1)
        
-   -- x' = x - move
+
     y' | y >= ((boxes * 50)-50) && moveY >= 0 = y
        | y >= ((boxes * 50)-50) && moveY < 0 = updateLocationY bank (floor(z')-1)
        | y <= (-((boxes * 50)-50)) && moveY <= 0 = y
@@ -682,7 +673,7 @@ countBlack (x:xs) n
 
 -----------------------------------------------------------------------------------------------------------------------
 
-rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test38, test39, test40]
+rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test40, test41, test42]
 
 test1 = TestCase $ assertEqual "boxes" 8 (boxes)
 test2 = TestCase $ assertEqual "boxesInt" 8 (boxesInt)
@@ -731,11 +722,15 @@ test36 = TestCase $ assertEqual "for getColor 1 ," (red) (getColor 1)
 
 test37 = TestCase $ assertEqual "for squareLocations 8 ((-200),200)," [(-350.0,350.0),(-250.0,350.0),(-150.0,350.0),(-50.0,350.0),(50.0,350.0),(150.0,350.0),(250.0,350.0),(350.0,350.0),(-350.0,250.0),(-250.0,250.0),(-150.0,250.0),(-50.0,250.0),(50.0,250.0),(150.0,250.0),(250.0,250.0),(350.0,250.0),(-350.0,150.0),(-250.0,150.0),(-150.0,150.0),(-50.0,150.0),(50.0,150.0),(150.0,150.0),(250.0,150.0),(350.0,150.0),(-350.0,50.0),(-250.0,50.0),(-150.0,50.0),(-50.0,50.0),(50.0,50.0),(150.0,50.0),(250.0,50.0),(350.0,50.0),(-350.0,-50.0),(-250.0,-50.0),(-150.0,-50.0),(-50.0,-50.0),(50.0,-50.0),(150.0,-50.0),(250.0,-50.0),(350.0,-50.0),(-350.0,-150.0),(-250.0,-150.0),(-150.0,-150.0),(-50.0,-150.0),(50.0,-150.0),(150.0,-150.0),(250.0,-150.0),(350.0,-150.0),(-350.0,-250.0),(-250.0,-250.0),(-150.0,-250.0),(-50.0,-250.0),(50.0,-250.0),(150.0,-250.0),(250.0,-250.0),(350.0,-250.0),(-350.0,-350.0),(-250.0,-350.0),(-150.0,-350.0),(-50.0,-350.0),(50.0,-350.0),(150.0,-350.0),(250.0,-350.0),(350.0,-350.0)] (squareLocations 8 ((-200),200))
 
-test38 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore initState)
+{-test38 = TestCase $ assertEqual "for squareLocations 4 ((-200),200)," [(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 4 ((-200),100))
 
-test39 = TestCase $ assertEqual "showTime" (Text "119") (showTime (Player {squareLoc = (100.0,100.0), playerColor = white, squareIndex = 1.0, candyBank = [], moveState = False, gameState = 2, colorBank = [], score = 0, time = 119}))
+test39 = TestCase $ assertEqual "for squareLocations 5 ((-400),200)," [(-400.0,200.0),(-300.0,200.0),(-200.0,200.0),(-100.0,200.0),(0.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 5 ((-400),200))-}
 
-test40 = TestCase $ assertEqual "countBlack" 3 (countBlack testList9 0)
+test40 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore initState)
+
+test41 = TestCase $ assertEqual "showTime" (Text "119") (showTime (Player {squareLoc = (100.0,100.0), playerColor = white, squareIndex = 1.0, candyBank = [], moveState = False, gameState = 2, colorBank = [], score = 0, time = 119}))
+
+test42 = TestCase $ assertEqual "countBlack" 3 (countBlack testList9 0)
 
 
 
