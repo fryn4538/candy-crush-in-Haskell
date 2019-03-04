@@ -33,7 +33,7 @@ moveCandyAux
 [fri feb 22] Day off
 
 
-[sat feb 23] Created a function that checks whether or not there is three candies or more in a row (horizontally). If there is, these candies are colored black. Created seperate gameStates, can be changed by pressing 1 and 2 (preliminarily)
+[sat feb 23 5h] Created a function that checks whether or not there is three candies or more in a row (horizontally). If there is, these candies are colored black. Created seperate gameStates, can be changed by pressing 1 and 2 (preliminarily)
 
 FUNCTIONS MADE
 checkRows
@@ -41,7 +41,7 @@ handleKeys (remade)
 render (remade)
 
 
-[mon feb 25] Completely remade checkRows, and added two auxillary functions that check candy-rows vertically and horizontally. Created functions makeBlackV and makeBlackH, these functions are used for coloring candies in a row black, both vertically and horizontally. After being colored another function moves all black candies to the top of the gameBoard where they then will be recolored into a new random color. (not yet implemented)
+[mon feb 25 7h] Completely remade checkRows, and added two auxillary functions that check candy-rows vertically and horizontally. Created functions makeBlackV and makeBlackH, these functions are used for coloring candies in a row black, both vertically and horizontally. After being colored another function moves all black candies to the top of the gameBoard where they then will be recolored into a new random color. (not yet implemented)
 
 FUNCTIONS MADE
 checkRows (remade)
@@ -50,7 +50,7 @@ checkVerticalRows
 makeBlackV
 makeBlackH
 
-[tue feb 26] Created functions to recolor all black candies into new random colors. 
+[tue feb 26 7h] Created functions to recolor all black candies into new random colors. 
 
 
 FUNCTIONS MADE
@@ -60,7 +60,7 @@ recolor
 getColor
 
 
-[wed-thu feb 27-28 (all night)] Wrote test-cases for functions:
+[wed-thu feb 27-28 16:00 - 06:00 (all night)] Wrote test-cases for functions:
 updateScore
 squareLocations
 paintRectangles
@@ -81,11 +81,13 @@ moveCandy
 Made a picture for every important function and algorithm we wrote about in the project report (all pictures)
 
 
-[fri feb 22] Wrote following subsections in our project report
+[fri feb 29 4h] Wrote following subsections in our project report
 Datatype
 Use cases 
 
 
+[mon mars 4 2h] Wrote following subsections in our project report
+Conclusion
 
 
 
