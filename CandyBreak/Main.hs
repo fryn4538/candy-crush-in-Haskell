@@ -19,22 +19,18 @@ type Candy = (((Float,Float),Int),Color)
          
 {- Description of every attribute
 
-     squareLoc : The current coordinates of the player, in the form of two floats
-     menuLoc :: The x-coordinate of the player while in gamestate 1. This coordinate increases and decreases when the player moves across the different gameboard-size selections
-     gridSize :: Represents which gameboard size the player chooses at the beginning of the game
-     playerColor :: Represents the color of the player
-     squareIndex :: Represents the current index of the player (squareIndex = 1 means that the player is currently sat on the top left square)
-     candyBank :: Represents the current constellation of candies. In other words, this is a list of every candy on screen, in order
-     moveState :: Either True or False. While true, the player is in a moveState. While in a moveState, the players next move switches two candies (if move is valid)
-     gameState :: Represents what the function render renders on screen. 1 = startScreen, 2 = game, 3 = gameover
-     colorBank :: 10 000 random colors, generated at the start of the game. When new candies are generated after a valid move, their colors are chosen from the first elements of colorBank
+     squareLoc : The current coordinates of the player, in the form of two floats.
+     playerColor :: Represents the color of the player.
+     squareIndex :: Represents the current index of the player (squareIndex = 1 means that the player is currently sat on the top left square).
+     candyBank :: Represents the current constellation of candies. In other words, this is a list of every candy on screen, in order.
+     moveState :: Either True or False. While true, the player is in a moveState. While in a moveState, the players next move switches two candies (if move is valid).
+     gameState :: Represents what the function render renders on screen. 1 = startScreen, 2 = game, 3 = gameover.
+     colorBank :: 10 000 random colors, generated at the start of the game. When new candies are generated after a valid move, their colors are chosen from the first elements of colorBank.
      score :: The players current score. Increases by the number of candies crushed every move. 
      time :: How much time left until gameover.
 
   INVARIANTS
      squareLoc :: Within the borders of the gameboard
-     menuLoc :: y-coordinate never changes
-     gridSize :: Either 5*5, 6*6, 7*7, 8*8, 9*9
      playerColor :: Either white or violet
      squareIndex :: Somewhere between 1 and gridsize
      candyBank :: Length is gridsize
@@ -63,9 +59,8 @@ data Player = Player
 
 {- boxes
    Holds the number of rows on the gameboard.
-   PRE: 5 <= boxes <= 9
    RETURNS: the number of rows on the gameboard.
-   EXAMPLES: boxes -> 9
+   EXAMPLES: boxes -> 8
 -}
 boxes :: Float
 boxes = 8
@@ -73,7 +68,7 @@ boxes = 8
 {- boxesInt
    Converts boxes into an Int.
    RETURNS: boxes as Int.
-   EXAMPLES: boxesInt -> 9
+   EXAMPLES: boxesInt -> 8
 -}
 boxesInt :: Int
 boxesInt = round boxes
@@ -91,8 +86,8 @@ main = play
        initState
        render
        handleKeys
-       timer --(const id) -- Löst så att rutan inte flyttas med (const id)
------------------------- Playfunktionens argument ----------------------------------------------
+       timer
+       
 {- window
    Tells the main function to run in fullscreen.
    RETURNS: how the main function shoud display its output.
@@ -112,7 +107,7 @@ background = black
 {- fps
    Tells the main function what fps it should operate at.
    RETURNS: the fps.
-   EXAMPLES: fps -> 60
+   EXAMPLES: fps -> 1
 -}
 fps :: Int
 fps = 1
@@ -122,7 +117,7 @@ fps = 1
    Tells the main function the initial state of the game.
    RETURNS: the initial state of the game.
    SIDE EFFECT: Gives the attributes in Player their initial values.
-   Examples initState -> Player {squareLoc = (-400.0,400.0), playerColor = RGBA 1.0 1.0 1.0 1.0, squareIndex = 1.0, candyBank = [(((100.0,100.0),1),RGBA 0.0 1.0 0.0 1.0)..(((100.0,100.0),81),RGBA 0.0 1.0 0.0 1.0)], moveState = False, gameState = 2, colorBank = [RGBA 1.0 0.0 0.0 1.0..RGBA 1.0 0.0 1.0 1.0], score = 0}
+   Examples initState -> Player {squareLoc = (-350.0,350.0), squareIndex = 1.0, playerColor = RGBA 1.0 1.0 1.0 1.0, colorBank = [RGBA 1.0 0.0 0.0 1.0..RGBA 1.0 0.0 1.0 1.0], candyBank = [(((100.0,100.0),1),RGBA 0.0 1.0 0.0 1.0)..(((100.0,100.0),64),RGBA 0.0 1.0 0.0 1.0)], moveState = False, gameState = 2, score = 0, time = 120}
 -}
 initState :: Player
 initState =  Player {squareLoc   = (((-((boxes*50)-50)),((boxes*50)-50))),
@@ -136,20 +131,15 @@ initState =  Player {squareLoc   = (((-((boxes*50)-50)),((boxes*50)-50))),
                      time        = 120}
 
 {- render player
-   Generates the grphics of the game.
+   Generates the graphics of the game.
    RETURNS: A Picture of the current gamestate with values extracted from player.
 -}
---  Draw a candy game state (convert it to a picture).
 render :: Player -> Picture
 render player
    | (gameState player) == 1 = pictures ([(Color green $ translate (-380) 0 $ text ("Candy Break"))] ++ [(Color green $ translate (-260) (-200) $ scale 0.4 0.4 $ text ("Press ENTER to play"))])
-   | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)] ++ [Color green $ translate 500 0 $ showTime player])
+   | (gameState player) == 2 = pictures ((paintRectangles (squareLocations boxes (-200,200))) ++ [mkMarker player $  squareLoc player] ++ (paintCandy $ candyBank player) ++ [Color green $ (translate (-700) 0 $ scoreDisp player)] ++ [Color green $ translate 500 0 $ showTime player] ++ [(Color green $ translate (-190) (-450) $ scale 0.3 0.3 $ text ("Press M for menu"))])
    | (gameState player) == 3 = pictures ([(Color green $ translate (-580) 0 $ text ("Your score was: " ++ show (score player)))] ++ [(Color green $ translate (-340) (-200) $ scale 0.4 0.4 $ text ("Press ENTER to play again"))] ++ [(Color green $ translate (-240) (-300) $ scale 0.4 0.4 $ text ("Press ESC to exit"))])
-   | (gameState player) == 4 = pictures (paintCandy $ testList1)
 
-
-
---  Draw a candy game state (convert it to a picture).
 {- HandleKeys Event
      Receives a keystate and performs a functioncall depending on what key is pressed in what way.
      RETURNS: a new gamestate depending on wich key is pressed.
@@ -159,13 +149,9 @@ render player
      KeyLeft: Returns a gamestate where player position in candyList is changed to be 1 less.
      SIDE EFFECTS: Updates the gamestate to a new gamestate that is printed out on the screen where the values of various player attributes may have changed depending on the key pressed.
      EXAMPLES: handleKeys (EventKey (Char '2') Down _ _) player == player {gameState = 2}
-  -}
-   
+-}   
 handleKeys :: Event -> Player -> Player
-handleKeys (EventKey (Char '1') Down _ _) player = player {gameState = 1}
-handleKeys (EventKey (Char '2') Down _ _) player = player {gameState = 2}
-handleKeys (EventKey (Char '3') Down _ _) player = player {gameState = 3}
-handleKeys (EventKey (Char '4') Down _ _) player = player {gameState = 4}
+handleKeys (EventKey (Char 'm') Down _ _) player = player {gameState = 1, score = 0, time = 120}
 
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) player
   | (gameState player) == 1 = player
@@ -673,7 +659,7 @@ countBlack (x:xs) n
 
 -----------------------------------------------------------------------------------------------------------------------
 
-rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test40, test41, test42]
+rT = runTestTT $ TestList [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19, test20, test21, test22, test23, test24, test25, test26, test28, test29, test30, test31, test32, test33, test34, test35, test36, test37, test38, test39, test40]
 
 test1 = TestCase $ assertEqual "boxes" 8 (boxes)
 test2 = TestCase $ assertEqual "boxesInt" 8 (boxesInt)
@@ -722,15 +708,11 @@ test36 = TestCase $ assertEqual "for getColor 1 ," (red) (getColor 1)
 
 test37 = TestCase $ assertEqual "for squareLocations 8 ((-200),200)," [(-350.0,350.0),(-250.0,350.0),(-150.0,350.0),(-50.0,350.0),(50.0,350.0),(150.0,350.0),(250.0,350.0),(350.0,350.0),(-350.0,250.0),(-250.0,250.0),(-150.0,250.0),(-50.0,250.0),(50.0,250.0),(150.0,250.0),(250.0,250.0),(350.0,250.0),(-350.0,150.0),(-250.0,150.0),(-150.0,150.0),(-50.0,150.0),(50.0,150.0),(150.0,150.0),(250.0,150.0),(350.0,150.0),(-350.0,50.0),(-250.0,50.0),(-150.0,50.0),(-50.0,50.0),(50.0,50.0),(150.0,50.0),(250.0,50.0),(350.0,50.0),(-350.0,-50.0),(-250.0,-50.0),(-150.0,-50.0),(-50.0,-50.0),(50.0,-50.0),(150.0,-50.0),(250.0,-50.0),(350.0,-50.0),(-350.0,-150.0),(-250.0,-150.0),(-150.0,-150.0),(-50.0,-150.0),(50.0,-150.0),(150.0,-150.0),(250.0,-150.0),(350.0,-150.0),(-350.0,-250.0),(-250.0,-250.0),(-150.0,-250.0),(-50.0,-250.0),(50.0,-250.0),(150.0,-250.0),(250.0,-250.0),(350.0,-250.0),(-350.0,-350.0),(-250.0,-350.0),(-150.0,-350.0),(-50.0,-350.0),(50.0,-350.0),(150.0,-350.0),(250.0,-350.0),(350.0,-350.0)] (squareLocations 8 ((-200),200))
 
-{-test38 = TestCase $ assertEqual "for squareLocations 4 ((-200),200)," [(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 4 ((-200),100))
+test38 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore initState)
 
-test39 = TestCase $ assertEqual "for squareLocations 5 ((-400),200)," [(-400.0,200.0),(-300.0,200.0),(-200.0,200.0),(-100.0,200.0),(0.0,200.0),(-200.0,100.0),(-100.0,100.0),(0.0,100.0),(100.0,100.0),(200.0,100.0),(-200.0,0.0),(-100.0,0.0),(0.0,0.0),(100.0,0.0),(200.0,0.0),(-200.0,-100.0),(-100.0,-100.0),(0.0,-100.0),(100.0,-100.0),(200.0,-100.0),(-200.0,-200.0),(-100.0,-200.0),(0.0,-200.0),(100.0,-200.0),(200.0,-200.0)] (squareLocations 5 ((-400),200))-}
+test39 = TestCase $ assertEqual "showTime" (Text "119") (showTime (Player {squareLoc = (100.0,100.0), playerColor = white, squareIndex = 1.0, candyBank = [], moveState = False, gameState = 2, colorBank = [], score = 0, time = 119}))
 
-test40 = TestCase $ assertEqual "for updateScore initState ," 1 (updateScore initState)
-
-test41 = TestCase $ assertEqual "showTime" (Text "119") (showTime (Player {squareLoc = (100.0,100.0), playerColor = white, squareIndex = 1.0, candyBank = [], moveState = False, gameState = 2, colorBank = [], score = 0, time = 119}))
-
-test42 = TestCase $ assertEqual "countBlack" 3 (countBlack testList9 0)
+test40 = TestCase $ assertEqual "countBlack" 3 (countBlack testList9 0)
 
 
 
