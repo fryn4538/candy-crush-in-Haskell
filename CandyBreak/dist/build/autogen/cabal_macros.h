@@ -7,12 +7,26 @@
   (major1) == 0 && (major2) <  1 || \
   (major1) == 0 && (major2) == 1 && (minor) <= 0)
 
+/* package GLUT-2.7.0.12 */
+#define VERSION_GLUT "2.7.0.12"
+#define MIN_VERSION_GLUT(major1,major2,minor) (\
+  (major1) <  2 || \
+  (major1) == 2 && (major2) <  7 || \
+  (major1) == 2 && (major2) == 7 && (minor) <= 0)
+
 /* package HUnit-1.5.0.0 */
 #define VERSION_HUnit "1.5.0.0"
 #define MIN_VERSION_HUnit(major1,major2,minor) (\
   (major1) <  1 || \
   (major1) == 1 && (major2) <  5 || \
   (major1) == 1 && (major2) == 5 && (minor) <= 0)
+
+/* package OpenGL-3.0.2.0 */
+#define VERSION_OpenGL "3.0.2.0"
+#define MIN_VERSION_OpenGL(major1,major2,minor) (\
+  (major1) <  3 || \
+  (major1) == 3 && (major2) <  0 || \
+  (major1) == 3 && (major2) == 0 && (minor) <= 2)
 
 /* package base-4.9.1.0 */
 #define VERSION_base "4.9.1.0"
@@ -21,9 +35,37 @@
   (major1) == 4 && (major2) <  9 || \
   (major1) == 4 && (major2) == 9 && (minor) <= 1)
 
+/* package call-stack-0.1.0 */
+#define VERSION_call_stack "0.1.0"
+#define MIN_VERSION_call_stack(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  1 || \
+  (major1) == 0 && (major2) == 1 && (minor) <= 0)
+
+/* package containers-0.5.7.1 */
+#define VERSION_containers "0.5.7.1"
+#define MIN_VERSION_containers(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  5 || \
+  (major1) == 0 && (major2) == 5 && (minor) <= 7)
+
+/* package deepseq-1.4.2.0 */
+#define VERSION_deepseq "1.4.2.0"
+#define MIN_VERSION_deepseq(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  4 || \
+  (major1) == 1 && (major2) == 4 && (minor) <= 2)
+
 /* package gloss-1.13.0.1 */
 #define VERSION_gloss "1.13.0.1"
 #define MIN_VERSION_gloss(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  13 || \
+  (major1) == 1 && (major2) == 13 && (minor) <= 0)
+
+/* package gloss-rendering-1.13.0.2 */
+#define VERSION_gloss_rendering "1.13.0.2"
+#define MIN_VERSION_gloss_rendering(major1,major2,minor) (\
   (major1) <  1 || \
   (major1) == 1 && (major2) <  13 || \
   (major1) == 1 && (major2) == 13 && (minor) <= 0)
