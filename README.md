@@ -1,5 +1,9 @@
 # Break candy
 
-Link to documentation: https://www.overleaf.com/read/bqkvrptcfzfy
+Main.hs location:
+/candyBreak/app/Main.hs
 
-To play: CandyBreak -> dist -> build -> CandyBreak -> CandyBreak.exe
+To play: 
+1) Install latest version of Stack, on Ubuntu the package is called `haskell-stack`.
+2) Open folder /candyBreak/ in terminal.
+3) Run command "stack build && stack run" to build and run the program.
